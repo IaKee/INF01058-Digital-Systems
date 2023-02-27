@@ -1,1 +1,0 @@
-xst -intstyle ise -ifn "D:/PROJETOS_SD/registrador_shift/sd_shiftregister.xst" -ofn "D:/PROJETOS_SD/registrador_shift/sd_shiftregister.syr" 
