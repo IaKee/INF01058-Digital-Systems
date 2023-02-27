@@ -1,0 +1,33 @@
+;Nome: Giordano Souza
+;Cartão UFRGS: 00308054
+
+;Programa 1 - Flag tester
+   ; Programa para gerar diferentes flags 
+   ;no processador didatico Ahmes para testar
+   ;com a implementaçao desse em VHDL
+
+; inicializa na segunda posiçao da memoria
+ORG 1
+LDA cte_128  ; gera flag N
+LDA cte_0 ; gera flag Z
+LDA cte_127
+ADD cte_1  ; gera flags N e V
+LDA cte_255
+ADD cte_1 ; gera flags Z e C
+LDA cte_1
+SUB cte_255 ; gera flags C e B
+HLT
+
+ORG 128
+cte_0: 
+	DB 0
+cte_1: 
+	DB 1
+cte_127:
+	DB 127
+cte_128: 
+	DB 128
+cte_254:
+	DB 254
+cte_255:
+	DB 255
