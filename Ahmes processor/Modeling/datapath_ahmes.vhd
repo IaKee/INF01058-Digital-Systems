@@ -35,33 +35,9 @@ entity datapath_ahmes is
         reg_Z: out std_logic;
         reg_V: out std_logic;
         reg_C: out std_logic;
-        reg_B: out std_logic
+        reg_B: out std_logic;
         
-        -- flags das operacoes
-		op_nop: out std_logic;
-	    op_sta: out std_logic;
-	    op_lda: out std_logic;
-		op_add: out std_logic;
-		op_or:  out std_logic;
-		op_and: out std_logic;
-		op_not: out std_logic;
-		op_sub: out std_logic;
-		op_jmp: out std_logic;
-		op_jn:  out std_logic;
-		op_jp:  out std_logic;
-		op_jv:  out std_logic;
-		op_jnv: out std_logic;
-		op_jz:  out std_logic;
-		op_jnz: out std_logic;
-		op_jc:  out std_logic;
-		op_jnc: out std_logic;
-		op_jb:  out std_logic;
-		op_jnb: out std_logic;
-		op_shr: out std_logic;
-		op_shl: out std_logic;
-		op_ror: out std_logic;
-		op_rol: out std_logic;
-		op_hlt: out std_logic);
+        reg_RI: out std_logic_vector(7 downto 0));
     end datapath_ahmes;
 
 architecture Behavioral of datapath_ahmes is
@@ -70,7 +46,7 @@ architecture Behavioral of datapath_ahmes is
     signal reg_AC: std_logic_vector (7 downto 0);
     signal reg_REM: std_logic_vector(7 downto 0);
     signal reg_RDM: std_logic_vector(7 downto 0);
-    signal reg_RI: std_logic_vector(7 downto 0);
+    signal reg_RI_op: std_logic_vector(7 downto 0);
     signal reg_MUXREM: std_logic_vector(7 downto 0);
     signal reg_MUXRDM: std_logic_vector(7 downto 0);
     signal reg_DECOD: std_logic_vector(7 downto 0);
@@ -126,8 +102,7 @@ architecture Behavioral of datapath_ahmes is
         end component;
     
     begin -- inicio behavioral
-        -- MEM
-        MEM : mem_ahmes
+        MEM : mem_ahmes -- MEM
             port map(
                 clka => CLOCK,
                 wea => mem_write,
@@ -241,12 +216,12 @@ architecture Behavioral of datapath_ahmes is
         process (CLOCK, RESET) -- RI
             begin
                 if(RESET = '1') then
-                    reg_RI <= "00000000";
+                    reg_RI_op <= "00000000";
                 elsif (rising_edge(CLOCK)) then
                     if (load_RI = '1') then
-                        reg_RI <= reg_RDM;
+                        reg_RI_op <= reg_RDM;
                     else
-                        reg_RI <= reg_RI;
+                        reg_RI_op <= reg_RI_op;
                     end if;
                 end if;
             end process;    
@@ -354,70 +329,14 @@ architecture Behavioral of datapath_ahmes is
                         ULA_op <= '0' & ULA_Y;  
                 end case;
             end process;   
-		
-        process(reg_decod)  -- DECOD
-            begin
-                -- reseta todas flags de operacao
-                op_nop <= '0';
-                op_sta <= '0';
-                op_lda <= '0';
-                op_add <= '0';
-                op_or  <= '0';
-                op_and <= '0';
-                op_not <= '0';
-                op_sub <= '0';
-                op_jmp <= '0';
-                op_jn  <= '0';
-                op_jp  <= '0';
-                op_jv  <= '0';
-                op_jnv <= '0';
-                op_jz  <= '0';
-                op_jnz <= '0';
-                op_jc  <= '0';
-                op_jnc <= '0';
-                op_jb  <= '0';
-                op_jnb <= '0';
-                op_shr <= '0';
-                op_shl <= '0';
-                op_ror <= '0';
-                op_rol <= '0';
-                op_hlt <= '0';
-                
-            case reg_DECOD is
-                when "00000000" => op_nop <= '1';  -- 00 NOP
-                when "00010000" => op_sta <= '1';  -- 16 STA
-                when "00100000" => op_lda <= '1';  -- 32 LDA
-                when "00110000" => op_add <= '1';  -- 48 ADD
-                when "01000000" => op_or  <= '1';  -- 64 OR
-                when "01010000" => op_and <= '1';  -- 80 AND
-                when "01100000" => op_not <= '1';  -- 96 NOT
-                when "01110000" => op_sub <= '1';  -- 112 SUB
-                when "10000000" => op_jmp <= '1';  -- 128 JMP
-                when "10010000" => op_jn  <= '1';  -- 144 JN
-                when "10010100" => op_jp  <= '1'; -- 148 JP
-                when "10011000" => op_jv  <= '1'; -- 152 JV
-                when "10011100" => op_jnv <= '1'; -- 156 JNV
-                when "10100000" => op_jz  <= '1'; -- 160 JZ
-                when "10100100" => op_jnz <= '1'; -- 164 JNZ
-                when "10110000" => op_jc  <= '1'; -- 176 JC
-                when "10110100" => op_jnc <= '1'; -- 180 JNC
-                when "10111000" => op_jb  <= '1'; -- 184 JB
-                when "10111100" => op_jnb <= '1'; -- 188 JNB
-                when "11100000" => op_shr <= '1'; -- 224 SHR
-                when "11100001" => op_shl <= '1'; -- 225 SHL
-                when "11100010" => op_ror <= '1'; -- 226 ROR
-                when "11100011" => op_rol <= '1'; -- 227 ROL
-                when "11110000" => op_hlt <= '1'; -- 240 HLT
-                when others => op_nop <= '1';
-                end case;
-            end process;
         
+        -- fios
         reg_N <= flag_N;
         reg_Z <= flag_Z;
         reg_V <= flag_V;
         reg_C <= flag_C;
         reg_B <= flag_B;
-        reg_DECOD <= reg_RI;
+        reg_RI <= reg_RI_op;
         reg_ULA <= std_logic_vector(ULA_op(7 downto 0));
         ULA_X <= reg_AC;  -- recupera valor X do acumulador
         ULA_Y <= reg_RDM;  -- recupera valor Y de uma posicao da mem?ria

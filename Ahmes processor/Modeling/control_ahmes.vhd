@@ -6,9 +6,19 @@ entity control_ahmes is
     Port( 
 	    CLOCK: in std_logic;
         RESET: in std_logic;
+
+		-- flags das operacoes
+		reg_RI: in std_logic_vector(7 downto 0);
 		  
+		-- flags de estado
+		reg_N: in STD_LOGIC;
+        reg_Z: in STD_LOGIC;
+        reg_V: in STD_LOGIC;
+        reg_C: in STD_LOGIC;
+        reg_B: in STD_LOGIC
+
 		-- controle dos registradores
-	    inc_pc: out std_logic;
+	    inc_PC_op: out std_logic;
 		load_ac: out std_logic;
         load_pc: out std_logic;
 		load_REM: out std_logic;
@@ -27,48 +37,53 @@ entity control_ahmes is
 		
 		-- controle da memoria
 		--mem_read: out  std_logic; -- nao utilizado
-		mem_write: out std_logic;
+		mem_write: out std_logic);
 		
-		-- flags de estado
-		reg_N: in STD_LOGIC;
-        reg_Z: in STD_LOGIC;
-        reg_V: in STD_LOGIC;
-        reg_C: in STD_LOGIC;
-        reg_B: in STD_LOGIC;
-
-		-- flags das operacoes
-		op_nop: in std_logic;
-	    op_sta: in std_logic;
-	    op_lda: in std_logic;
-		op_add: in std_logic;
-		op_or:  in std_logic;
-		op_and: in std_logic;
-		op_not: in std_logic;
-		op_sub: in std_logic;
-		op_jmp: in std_logic;
-		op_jn:  in std_logic;
-		op_jp:  in std_logic;
-		op_jv:  in std_logic;
-		op_jnv: in std_logic;
-		op_jz:  in std_logic;
-		op_jnz: in std_logic;
-		op_jc:  in std_logic;
-		op_jnc: in std_logic;
-		op_jb:  in std_logic;
-		op_jnb: in std_logic;
-		op_shr: in std_logic;
-		op_shl: in std_logic;
-		op_ror: in std_logic;
-		op_rol: in std_logic;
-		op_hlt: in std_logic);
 	end control_ahmes;
 
 architecture Behavioral of control_ahmes is
     type state_type is (S0, S1, S2, S3, S4, S5, S6, S7, S8);
-	 signal next_state, current_state: state_type;
-	 
+	signal next_state, current_state: state_type;
+	signal RI_decod: std_logic_vector(23 downto 0);
+	signal inc_PC_op: std_logic;  -- para poder ler desse proprio sinal (manter valor)
+	-- adicionar load_RDM aqui
     begin
-		process(CLOCK, RESET) -- controle de estados
+		-- conexões
+		inc_PC <= inc_pc_op;
+
+		process(reg_RI)  -- RI decod
+			begin
+				RI_decod <= '000000000000000000000000';
+				case reg_RI is
+					when "00000000" => RI_decod(0)  <= '1'; -- 00 NOP
+					when "00010000" => RI_decod(1)  <= '1'; -- 16 STA
+					when "00100000" => RI_decod(2)  <= '1'; -- 32 LDA
+					when "00110000" => RI_decod(3)  <= '1'; -- 48 ADD
+					when "01000000" => RI_decod(4)  <= '1'; -- 64 OR
+					when "01010000" => RI_decod(5)  <= '1'; -- 80 AND
+					when "01100000" => RI_decod(6)  <= '1'; -- 96 NOT
+					when "01110000" => RI_decod(7)  <= '1'; -- 112 SUB
+					when "10000000" => RI_decod(8)  <= '1'; -- 128 JMP
+					when "10010000" => RI_decod(9)  <= '1'; -- 144 JN
+					when "10010100" => RI_decod(10) <= '1'; -- 148 JP
+					when "10011000" => RI_decod(11) <= '1'; -- 152 JV
+					when "10011100" => RI_decod(12) <= '1'; -- 156 JNV
+					when "10100000" => RI_decod(13) <= '1'; -- 160 JZ
+					when "10100100" => RI_decod(14) <= '1'; -- 164 JNZ
+					when "10110000" => RI_decod(15) <= '1'; -- 176 JC
+					when "10110100" => RI_decod(16) <= '1'; -- 180 JNC
+					when "10111000" => RI_decod(17) <= '1'; -- 184 JB
+					when "10111100" => RI_decod(18) <= '1'; -- 188 JNB
+					when "11100000" => RI_decod(19) <= '1'; -- 224 SHR
+					when "11100001" => RI_decod(20) <= '1'; -- 225 SHL
+					when "11100010" => RI_decod(21) <= '1'; -- 226 ROR
+					when "11100011" => RI_decod(22) <= '1'; -- 227 ROL
+					when "11110000" => RI_decod(23) <= '1'; -- 240 HLT
+					when others => RI_decod <= '00000000000000000000000';
+					end case;
+			end process;
+		
+		process(CLOCK, RESET) -- controle dos estados
 		    begin
 				if(RESET = '1') then
 					current_state <= S0;
@@ -78,10 +93,10 @@ architecture Behavioral of control_ahmes is
 					current_state <= current_state;
 				end if;	
 			end process;
-				
-		process(
+
+		process(  -- FSM Mealy
 			next_state,
-			
+
 			-- flags gerais
 			reg_N, 
 			reg_Z, 
@@ -89,35 +104,11 @@ architecture Behavioral of control_ahmes is
 			reg_C, 
 			reg_B,
 			
-			--flags das ops
-			op_nop,
-			op_sta,
-			op_lda,
-			op_add,
-			op_or,
-			op_and,
-			op_not,
-			op_sub,
-			op_jmp,
-			op_jn,
-			op_jp,
-			op_jv,
-			op_jnv,
-			op_jz,
-			op_jnz,
-			op_jc,
-			op_jnc,
-			op_jb,
-			op_jnb,
-			op_shr,
-			op_shl,
-			op_ror,
-			op_rol,
-			op_hlt)
-				begin
-
+			--codigo das operacoes
+			RI_decod)
+			begin
 				-- reseta sinais de carga
-				inc_pc <= '0';
+				inc_PC_op <= '0';
 				load_ac <= '0';
 				load_pc <= '0';
 				load_N <= '0'; 
@@ -138,18 +129,18 @@ architecture Behavioral of control_ahmes is
 						next_state <= S1;
 					when S1 =>
 						load_REM <= '0';
-						inc_pc <= '0';
+						inc_PC_op <= '0';
 						next_state <= S2;
 					when S2 =>
 						load_RDM <= '1';
-						inc_pc <= '1';
+						inc_PC_op <= '1';
 						next_state <= S3;
 					when S3 =>
-						inc_pc <= '0';
+						inc_PC_op <= '0';
 						load_RDM <= '0';
-						if(op_nop = '1') then  -- NOP
+						if(RI_decod(0) = '1') then  -- NOP
 							next_state <= S0;
-						elsif(op_not = '1') then  -- NOT
+						elsif(RI_decod(6) = '1') then  -- NOT
 							sel_ULA <= "0011";
 							load_AC <= '1';
 							load_N <= '1';
@@ -158,37 +149,37 @@ architecture Behavioral of control_ahmes is
 							load_C <= '1';
 							load_B <= '1';
 							next_state <= S0;
-						elsif(op_jn = '1' and reg_N = '0') then -- JN quando n=0
-							inc_PC <= '1';
+						elsif(RI_decod(9) = '1' and reg_N = '0') then -- JN quando n=0
+							inc_PC_op <= '1';
 							next_state <= S0;
-						elsif(op_jp = '1' and reg_N = '1') then -- JP quando n=1
-							inc_PC <= '1';
+						elsif(RI_decod(10) = '1' and reg_N = '1') then -- JP quando n=1
+							inc_PC_op <= '1';
 							next_state <= S0;
-						elsif(op_jv = '1' and reg_V = '0') then -- JV quando v=0
-							inc_PC <= '1';
+						elsif(RI_decod(11) = '1' and reg_V = '0') then -- JV quando v=0
+							inc_PC_op <= '1';
 							next_state <= S0;
-						elsif(op_jv = '1' and reg_V = '1') then -- JNV quando v=1
-							inc_PC <= '1';
+						elsif(RI_decod(12) = '1' and reg_V = '1') then -- JNV quando v=1
+							inc_PC_op <= '1';
 							next_state <= S0;	
-						elsif(op_jz = '1' and reg_Z = '0') then -- JZ quando z=0
-							inc_PC <= '1';
+						elsif(RI_decod(13) = '1' and reg_Z = '0') then -- JZ quando z=0
+							inc_PC_op <= '1';
 							next_state <= S0;
-						elsif(op_jz = '1' and reg_Z = '1') then -- JNZ quando z=1
-							inc_PC <= '1';
+						elsif(RI_decod(14) = '1' and reg_Z = '1') then -- JNZ quando z=1
+							inc_PC_op <= '1';
 							next_state <= S0;
-						elsif(op_jc = '1' and reg_C = '0') then -- JC quando c=0
-							inc_PC <= '1';
+						elsif(RI_decod(15) = '1' and reg_C = '0') then -- JC quando c=0
+							inc_PC_op <= '1';
 							next_state <= S0;
-						elsif(op_jb = '1' and reg_C = '1') then -- JNC quando c=1
-							inc_PC <= '1';
+						elsif(RI_decod(16) = '1' and reg_C = '1') then -- JNC quando c=1
+							inc_PC_op <= '1';
 							next_state <= S0;
-						elsif(op_jb = '1' and reg_B = '0') then -- JB quando b=0
-							inc_PC <= '1';
+						elsif(RI_decod(17) = '1' and reg_B = '0') then -- JB quando b=0
+							inc_PC_op <= '1';
 							next_state <= S0;
-						elsif(op_jb = '1' and reg_B = '1') then -- JNB quando b=1
-							inc_PC <= '1';
+						elsif(RI_decod(18) = '1' and reg_B = '1') then -- JNB quando b=1
+							inc_PC_op <= '1';
 							next_state <= S0;
-						elsif(op_shr = '1') then  -- SHR
+						elsif(RI_decod(19) = '1') then  -- SHR
 							sel_ULA <= "0101";
 							load_AC <= '1';
 							load_N <= '1';
@@ -197,7 +188,7 @@ architecture Behavioral of control_ahmes is
 							load_C <= '1';
 							load_B <= '1';
 							next_state <= S0;
-						elsif(op_shr = '1') then  -- SHL
+						elsif(RI_decod(20) = '1') then  -- SHL
 							sel_ULA <= "0101";
 							load_AC <= '1';
 							load_N <= '1';
@@ -206,7 +197,7 @@ architecture Behavioral of control_ahmes is
 							load_C <= '1';
 							load_B <= '1';
 							next_state <= S0;
-						elsif(op_shr = '1') then  -- ROR
+						elsif(RI_decod(21) = '1') then  -- ROR
 							sel_ULA <= "0101";
 							load_AC <= '1';
 							load_N <= '1';
@@ -215,7 +206,7 @@ architecture Behavioral of control_ahmes is
 							load_C <= '1';
 							load_B <= '1';
 							next_state <= S0;
-						elsif(op_shr = '1') then  -- ROL
+						elsif(RI_decod(22) = '1') then  -- ROL
 							sel_ULA <= "0101";
 							load_AC <= '1';
 							load_N <= '1';
@@ -224,8 +215,8 @@ architecture Behavioral of control_ahmes is
 							load_C <= '1';
 							load_B <= '1';
 							next_state <= S0;
-						elsif(op_hlt = '1') then -- HLT
-							inc_PC <= '0';
+						elsif(RI_decod(23) = '1') then -- HLT
+							inc_PC_op <= '0';
 							next_state <= S8;
 						else  -- qualquer outra operacao
 							sel_MUXREM <= '0';
@@ -234,7 +225,7 @@ architecture Behavioral of control_ahmes is
 						end if;
 					when S4 =>
 						sel_MUXREM <= '0';
-						inc_PC <= '0';
+						inc_PC_op <= '0';
 						load_AC <= '0';
 						load_REM <= '0';
 						load_AC <= '0';
@@ -243,82 +234,88 @@ architecture Behavioral of control_ahmes is
 						load_V <= '0';
 						load_C <= '0';
 						load_B <= '0';
-						if(op_sta = '1' or
-							op_lda = '1' or
-							op_add = '1' or
-							op_or = '1' or
-							op_and = '1' or
-							op_sub = '1' or
-							op_jmp = '1' or
-							op_jn = '1' or
-							op_jp = '1' or
-							op_jv = '1' or
-							op_jnv = '1' or
-							op_jz = '1' or
-							op_jnz = '1' or
-							op_jc = '1' or
-							op_jnc = '1' or
-							op_jb = '1' or
-							op_jnb = '1') then
-								inc_PC <= '1';
+						if(RI_decod(1) = '1' or
+							RI_decod(2) = '1' or
+							RI_decod(3) = '1' or
+							RI_decod(4) = '1' or
+							RI_decod(5) = '1' or
+							RI_decod(7) = '1' or
+							RI_decod(8) = '1' or
+							RI_decod(9) = '1' or
+							RI_decod(10) = '1' or
+							RI_decod(11) = '1' or
+							RI_decod(12) = '1' or
+							RI_decod(13) = '1' or
+							RI_decod(14) = '1' or
+							RI_decod(15) = '1' or
+							RI_decod(16) = '1' or
+							RI_decod(17) = '1' or
+							RI_decod(18) = '1') then
+								inc_PC_op <= '1';
+						else
+							inc_PC_op <= inc_PC_op;  -- mantem
 						end if;
 						next_state <= S5;
 					when S5 =>
-						inc_PC <= '0';
-						if(op_sta = '1' or
-							op_lda = '1' or
-							op_add = '1' or
-							op_or = '1' or
-							op_and = '1' or
-							op_sub = '1' or
-							op_jmp = '1' or
-							op_jn = '1' or
-							op_jp = '1' or
-							op_jv = '1' or
-							op_jnv = '1' or
-							op_jz = '1' or
-							op_jnz = '1' or
-							op_jc = '1' or
-							op_jnc = '1' or
-							op_jb = '1' or
-							op_jnb = '1') then
-								sel_MUXREM <= '1';
-								load_REM <= '1';
-								next_state <= S6;
+						inc_PC_op <= '0';
+						if(RI_decod(1) = '1' or
+						RI_decod(2) = '1' or
+						RI_decod(3) = '1' or
+						RI_decod(4) = '1' or
+						RI_decod(5) = '1' or
+						RI_decod(7) = '1' or
+						RI_decod(8) = '1' or
+						RI_decod(9) = '1' or
+						RI_decod(10) = '1' or
+						RI_decod(11) = '1' or
+						RI_decod(12) = '1' or
+						RI_decod(13) = '1' or
+						RI_decod(14) = '1' or
+						RI_decod(15) = '1' or
+						RI_decod(16) = '1' or
+						RI_decod(17) = '1' or
+						RI_decod(18) = '1') then
+							sel_MUXREM <= '1';
+							load_REM <= '1';
+							next_state <= S6;
 						else
 							load_PC <= '1';
 							next_state <= S0;
 						end if;
-					when S6 =>
-						inc_PC <= '0';
+					when S6 =>  -- rever esse aqui
+						inc_PC_op <= '0';
 						sel_MUXREM <= '0';
 						load_REM <= '0';
 						load_PC <= '0';
 						next_state <= S7;
-						
-						if(op_sta = '1') then  -- STA
+						if(RI_decod(1) = '1') then  -- STA
 							load_RDM <= '1';
+						else
+							load_RDM <= load_RDM;  -- isso nao deve funcionar, arrumar
 						end if;
 					when S7 =>
-						if(op_sta = '1') then
+						if(RI_decod(1) = '1') then
 							mem_write <= '1';
-						elsif(op_lda = '1') then
+							sel_ULA <= sel_ULA; -- mantem
+						elsif(RI_decod(2) = '1') then
 							sel_ULA <= "0100";  -- NOP(ULA Y)
-						elsif(op_add = '1') then
+						elsif(RI_decod(3) = '1') then
 							sel_ULA <= "0000";
-						elsif(op_or = '1') then
+						elsif(RI_decod(4) = '1') then
 							sel_ULA <= "0001";
-						elsif(op_and = '1') then
+						elsif(RI_decod(5) = '1') then
 							sel_ULA <= "0010";
-						elsif(op_not = '1') then
+						elsif(RI_decod(6) = '1') then
 							sel_ULA <= "0011";
-						elsif(op_sub = '1') then
+						elsif(RI_decod(7) = '1') then
 							sel_ULA <= "0100";
+						else
+							sel_ULA <= sel_ULA;
 						end if;
 					when S8 =>
 						next_state <= S8;
 					when others =>
 						next_state <= S0;
 				end case;
-				end process;
+			end process;
     end Behavioral;
