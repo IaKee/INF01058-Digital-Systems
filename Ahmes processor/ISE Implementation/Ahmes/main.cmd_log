@@ -1,0 +1,1 @@
+xst -intstyle ise -ifn "D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/main.xst" -ofn "D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/main.syr" 

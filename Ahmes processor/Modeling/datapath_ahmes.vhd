@@ -37,7 +37,7 @@ entity datapath_ahmes is
         reg_C: out std_logic;
         reg_B: out std_logic;
         
-        reg_RI: out std_logic_vector(7 downto 0));
+        DECOD_RI: out std_logic_vector(23 downto 0));
     end datapath_ahmes;
 
 architecture Behavioral of datapath_ahmes is
@@ -64,45 +64,22 @@ architecture Behavioral of datapath_ahmes is
     signal ULA_X: std_logic_vector(7 downto 0); -- reg_AC
     signal ULA_Y: std_logic_vector(7 downto 0); -- reg_RDM;
 	signal ULA_op: std_logic_vector(8 downto 0); -- registrador operacional da ula
-
-    -- DECOD e flags das operacoes
-	signal op_nop: std_logic;
-	signal op_sta: std_logic;
-	signal op_lda: std_logic;
-	signal op_add: std_logic;
-	signal op_or:  std_logic;
-	signal op_and: std_logic;
-	signal op_not: std_logic;
-	signal op_sub: std_logic;
-	signal op_jmp: std_logic;
-	signal op_jn:  std_logic;
-	signal op_jp:  std_logic;
-	signal op_jv:  std_logic;
-	signal op_jnv: std_logic;
-	signal op_jz:  std_logic;
-	signal op_jnz: std_logic;
-	signal op_jc:  std_logic;
-	signal op_jnc: std_logic;
-	signal op_jb:  std_logic;
-	signal op_jnb: std_logic;
-	signal op_shr: std_logic;
-	signal op_shl: std_logic;
-	signal op_ror: std_logic;
-	signal op_rol: std_logic;
-	signal op_hlt: std_logic;
 	 
-    -- memoria (mem_ahmes)
-    component mem_ahmes
-        port(
-            clka : in std_logic;
-            wea : in std_logic_vector(0 downto 0);
-            addra : in std_logic_vector(7 downto 0);
-            dina : in std_logic_vector(7 downto 0);
-            douta : out std_logic_vector(7 downto 0));
-        end component;
+    -- decod
+    signal reg_DECOD_RI: std_logic_vector(23 downto 0);
+
+    -- memoria (mem_ahmes) -- arrumar
+    COMPONENT mem
+	  PORT (
+		clka : IN STD_LOGIC;
+		wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+		addra : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+		dina : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+		douta : OUT STD_LOGIC_VECTOR(7 DOWNTO 0));
+	END COMPONENT;
     
     begin -- inicio behavioral
-        MEM : mem_ahmes -- MEM
+        mem_op : mem -- MEM
             port map(
                 clka => CLOCK,
                 wea => mem_write,
@@ -330,13 +307,45 @@ architecture Behavioral of datapath_ahmes is
                 end case;
             end process;   
         
-        -- fios
+        process(reg_RI_op)  -- reg_DECOD_RI
+			begin
+				reg_DECOD_RI <= "000000000000000000000000";
+				case reg_RI_op is
+					when "00000000" => reg_DECOD_RI(0)  <= '1'; -- 00 NOP
+					when "00010000" => reg_DECOD_RI(1)  <= '1'; -- 16 STA
+					when "00100000" => reg_DECOD_RI(2)  <= '1'; -- 32 LDA
+					when "00110000" => reg_DECOD_RI(3)  <= '1'; -- 48 ADD
+					when "01000000" => reg_DECOD_RI(4)  <= '1'; -- 64 OR
+					when "01010000" => reg_DECOD_RI(5)  <= '1'; -- 80 AND
+					when "01100000" => reg_DECOD_RI(6)  <= '1'; -- 96 NOT
+					when "01110000" => reg_DECOD_RI(7)  <= '1'; -- 112 SUB
+					when "10000000" => reg_DECOD_RI(8)  <= '1'; -- 128 JMP
+					when "10010000" => reg_DECOD_RI(9)  <= '1'; -- 144 JN
+					when "10010100" => reg_DECOD_RI(10) <= '1'; -- 148 JP
+					when "10011000" => reg_DECOD_RI(11) <= '1'; -- 152 JV
+					when "10011100" => reg_DECOD_RI(12) <= '1'; -- 156 JNV
+					when "10100000" => reg_DECOD_RI(13) <= '1'; -- 160 JZ
+					when "10100100" => reg_DECOD_RI(14) <= '1'; -- 164 JNZ
+					when "10110000" => reg_DECOD_RI(15) <= '1'; -- 176 JC
+					when "10110100" => reg_DECOD_RI(16) <= '1'; -- 180 JNC
+					when "10111000" => reg_DECOD_RI(17) <= '1'; -- 184 JB
+					when "10111100" => reg_DECOD_RI(18) <= '1'; -- 188 JNB
+					when "11100000" => reg_DECOD_RI(19) <= '1'; -- 224 SHR
+					when "11100001" => reg_DECOD_RI(20) <= '1'; -- 225 SHL
+					when "11100010" => reg_DECOD_RI(21) <= '1'; -- 226 ROR
+					when "11100011" => reg_DECOD_RI(22) <= '1'; -- 227 ROL
+					when "11110000" => reg_DECOD_RI(23) <= '1'; -- 240 HLT
+					when others => reg_DECOD_RI <= reg_DECOD_RI;
+					end case;
+			end process;
+        
+        -- conexões
         reg_N <= flag_N;
         reg_Z <= flag_Z;
         reg_V <= flag_V;
         reg_C <= flag_C;
         reg_B <= flag_B;
-        reg_RI <= reg_RI_op;
+        DECOD_RI <= reg_DECOD_RI;
         reg_ULA <= std_logic_vector(ULA_op(7 downto 0));
         ULA_X <= reg_AC;  -- recupera valor X do acumulador
         ULA_Y <= reg_RDM;  -- recupera valor Y de uma posicao da mem?ria

@@ -15,10 +15,10 @@ entity control_ahmes is
         reg_Z: in STD_LOGIC;
         reg_V: in STD_LOGIC;
         reg_C: in STD_LOGIC;
-        reg_B: in STD_LOGIC
+        reg_B: in STD_LOGIC;
 
 		-- controle dos registradores
-	    inc_PC_op: out std_logic;
+	    inc_PC: out std_logic;
 		load_ac: out std_logic;
         load_pc: out std_logic;
 		load_REM: out std_logic;
@@ -37,51 +37,23 @@ entity control_ahmes is
 		
 		-- controle da memoria
 		--mem_read: out  std_logic; -- nao utilizado
-		mem_write: out std_logic);
-		
+		mem_write: out std_logic);	
 	end control_ahmes;
 
 architecture Behavioral of control_ahmes is
     type state_type is (S0, S1, S2, S3, S4, S5, S6, S7, S8);
 	signal next_state, current_state: state_type;
 	signal RI_decod: std_logic_vector(23 downto 0);
-	signal inc_PC_op: std_logic;  -- para poder ler desse proprio sinal (manter valor)
+	signal sel_ULA_op: std_logic_vector(3 downto 0);
+	signal inc_PC_op, load_RDM_op: std_logic;  -- para poder ler desse proprio sinal (manter valor)
+	
 	-- adicionar load_RDM aqui
+	
     begin
 		-- conexões
 		inc_PC <= inc_pc_op;
-
-		process(reg_RI)  -- RI decod
-			begin
-				RI_decod <= '000000000000000000000000';
-				case reg_RI is
-					when "00000000" => RI_decod(0)  <= '1'; -- 00 NOP
-					when "00010000" => RI_decod(1)  <= '1'; -- 16 STA
-					when "00100000" => RI_decod(2)  <= '1'; -- 32 LDA
-					when "00110000" => RI_decod(3)  <= '1'; -- 48 ADD
-					when "01000000" => RI_decod(4)  <= '1'; -- 64 OR
-					when "01010000" => RI_decod(5)  <= '1'; -- 80 AND
-					when "01100000" => RI_decod(6)  <= '1'; -- 96 NOT
-					when "01110000" => RI_decod(7)  <= '1'; -- 112 SUB
-					when "10000000" => RI_decod(8)  <= '1'; -- 128 JMP
-					when "10010000" => RI_decod(9)  <= '1'; -- 144 JN
-					when "10010100" => RI_decod(10) <= '1'; -- 148 JP
-					when "10011000" => RI_decod(11) <= '1'; -- 152 JV
-					when "10011100" => RI_decod(12) <= '1'; -- 156 JNV
-					when "10100000" => RI_decod(13) <= '1'; -- 160 JZ
-					when "10100100" => RI_decod(14) <= '1'; -- 164 JNZ
-					when "10110000" => RI_decod(15) <= '1'; -- 176 JC
-					when "10110100" => RI_decod(16) <= '1'; -- 180 JNC
-					when "10111000" => RI_decod(17) <= '1'; -- 184 JB
-					when "10111100" => RI_decod(18) <= '1'; -- 188 JNB
-					when "11100000" => RI_decod(19) <= '1'; -- 224 SHR
-					when "11100001" => RI_decod(20) <= '1'; -- 225 SHL
-					when "11100010" => RI_decod(21) <= '1'; -- 226 ROR
-					when "11100011" => RI_decod(22) <= '1'; -- 227 ROL
-					when "11110000" => RI_decod(23) <= '1'; -- 240 HLT
-					when others => RI_decod <= '00000000000000000000000';
-					end case;
-			end process;
+		load_RDM <= load_RDM_op;
+		sel_ULA <= sel_ULA_op;
 		
 		process(CLOCK, RESET) -- controle dos estados
 		    begin
@@ -116,32 +88,32 @@ architecture Behavioral of control_ahmes is
 				load_V <= '0'; 
 				load_C <= '0'; 
 				load_B <= '0';
-				load_RDM <= '0';
+				load_RDM_op <= '0';
 				load_REM <= '0';
 				sel_MUXREM <= '0';
 				sel_MUXRDM <= '0';
-				sel_ULA <= "0000";
+				sel_ULA_op <= "0000";
 				mem_write <= '0';
 				
 				case current_state is
 					when S0 =>
-						load_RDM <= '1';
+						load_RDM_op <= '1';
 						next_state <= S1;
 					when S1 =>
 						load_REM <= '0';
 						inc_PC_op <= '0';
 						next_state <= S2;
 					when S2 =>
-						load_RDM <= '1';
+						load_RDM_op <= '1';
 						inc_PC_op <= '1';
 						next_state <= S3;
 					when S3 =>
 						inc_PC_op <= '0';
-						load_RDM <= '0';
+						load_RDM_op <= '0';
 						if(RI_decod(0) = '1') then  -- NOP
 							next_state <= S0;
 						elsif(RI_decod(6) = '1') then  -- NOT
-							sel_ULA <= "0011";
+							sel_ULA_op <= "0011";
 							load_AC <= '1';
 							load_N <= '1';
 							load_Z <= '1';
@@ -180,7 +152,7 @@ architecture Behavioral of control_ahmes is
 							inc_PC_op <= '1';
 							next_state <= S0;
 						elsif(RI_decod(19) = '1') then  -- SHR
-							sel_ULA <= "0101";
+							sel_ULA_op <= "0101";
 							load_AC <= '1';
 							load_N <= '1';
 							load_Z <= '1';
@@ -189,7 +161,7 @@ architecture Behavioral of control_ahmes is
 							load_B <= '1';
 							next_state <= S0;
 						elsif(RI_decod(20) = '1') then  -- SHL
-							sel_ULA <= "0101";
+							sel_ULA_op <= "0101";
 							load_AC <= '1';
 							load_N <= '1';
 							load_Z <= '1';
@@ -198,7 +170,7 @@ architecture Behavioral of control_ahmes is
 							load_B <= '1';
 							next_state <= S0;
 						elsif(RI_decod(21) = '1') then  -- ROR
-							sel_ULA <= "0101";
+							sel_ULA_op <= "0101";
 							load_AC <= '1';
 							load_N <= '1';
 							load_Z <= '1';
@@ -207,7 +179,7 @@ architecture Behavioral of control_ahmes is
 							load_B <= '1';
 							next_state <= S0;
 						elsif(RI_decod(22) = '1') then  -- ROL
-							sel_ULA <= "0101";
+							sel_ULA_op <= "0101";
 							load_AC <= '1';
 							load_N <= '1';
 							load_Z <= '1';
@@ -289,28 +261,28 @@ architecture Behavioral of control_ahmes is
 						load_PC <= '0';
 						next_state <= S7;
 						if(RI_decod(1) = '1') then  -- STA
-							load_RDM <= '1';
+							load_RDM_op <= '1';
 						else
-							load_RDM <= load_RDM;  -- isso nao deve funcionar, arrumar
+							load_RDM_op <= load_RDM_op;  -- isso nao deve funcionar, arrumar
 						end if;
 					when S7 =>
 						if(RI_decod(1) = '1') then
 							mem_write <= '1';
-							sel_ULA <= sel_ULA; -- mantem
+							sel_ULA_op <= sel_ULA_op; -- mantem
 						elsif(RI_decod(2) = '1') then
-							sel_ULA <= "0100";  -- NOP(ULA Y)
+							sel_ULA_op <= "0100";  -- NOP(ULA Y)
 						elsif(RI_decod(3) = '1') then
-							sel_ULA <= "0000";
+							sel_ULA_op <= "0000";
 						elsif(RI_decod(4) = '1') then
-							sel_ULA <= "0001";
+							sel_ULA_op <= "0001";
 						elsif(RI_decod(5) = '1') then
-							sel_ULA <= "0010";
+							sel_ULA_op <= "0010";
 						elsif(RI_decod(6) = '1') then
-							sel_ULA <= "0011";
+							sel_ULA_op <= "0011";
 						elsif(RI_decod(7) = '1') then
-							sel_ULA <= "0100";
+							sel_ULA_op <= "0100";
 						else
-							sel_ULA <= sel_ULA;
+							sel_ULA_op <= sel_ULA_op;
 						end if;
 					when S8 =>
 						next_state <= S8;

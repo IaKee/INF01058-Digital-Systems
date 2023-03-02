@@ -1,0 +1,4 @@
+xst -intstyle ise -ifn "D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/datapath_ahmes.xst" -ofn "D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/datapath_ahmes.syr" 
+vhdtdtfi -lib work datapath.vhd -prj Ahmes -o datapath_ahmes.spl -module datapath_ahmes -template D:/Xilinx/14.7/ISE_DS/ISE//data/splfile.tft -deleteonerror 
+spl2sym -intstyle ise -family artix7 datapath_ahmes.spl {D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/datapath_ahmes.sym} 
+vhdtdtfi -prj Ahmes -o "D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/datapath_ahmes.vhi" -module datapath_ahmes -template D:/Xilinx/14.7/ISE_DS/ISE//data/vhdlinst.tft -deleteonerror -lib work ipcore_dir/mem.vhd -lib work datapath.vhd 
