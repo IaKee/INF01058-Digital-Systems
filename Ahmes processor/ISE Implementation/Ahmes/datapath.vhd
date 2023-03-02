@@ -3,7 +3,7 @@ library ieee;
 	use ieee.std_logic_unsigned.all;
 	use ieee.numeric_std.all;
 
-entity datapath_ahmes is
+entity datapath is
     port( 
         CLOCK: in std_logic;
         RESET: in std_logic;
@@ -38,9 +38,9 @@ entity datapath_ahmes is
         reg_B: out std_logic;
         
         DECOD_RI: out std_logic_vector(23 downto 0));
-    end datapath_ahmes;
+    end datapath;
 
-architecture Behavioral of datapath_ahmes is
+architecture Behavioral of datapath is
     -- registradores
     signal reg_PC: std_logic_vector(7 downto 0);
     signal reg_AC: std_logic_vector (7 downto 0);

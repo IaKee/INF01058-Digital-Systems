@@ -1,1 +1,2 @@
-work	"control.vhd"
+work	"datapath.vhd"
+work	"ipcore_dir/mem.vhd"

@@ -5,10 +5,22 @@
      behavior or data corruption.  It is strongly advised that
      users do not edit the contents of this file. -->
 <messages>
-<msg type="error" file="HDLCompiler" num="806" delta="old" >"D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 37: Syntax error near &quot;<arg fmt="%s" index="1">control</arg>&quot;.
+<msg type="error" file="HDLCompiler" num="1728" delta="new" >"D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 137: Type error near <arg fmt="%s" index="1">sel_muxrem</arg> ; current type <arg fmt="%s" index="2">std_logic_vector</arg>; expected type <arg fmt="%s" index="3">std_logic</arg>
 </msg>
 
-<msg type="error" file="HDLCompiler" num="854" delta="old" >"D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 12: Unit &lt;<arg fmt="%s" index="1">behavioral</arg>&gt; ignored due to previous errors.
+<msg type="error" file="HDLCompiler" num="1728" delta="new" >"D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 138: Type error near <arg fmt="%s" index="1">sel_muxrdm</arg> ; current type <arg fmt="%s" index="2">std_logic_vector</arg>; expected type <arg fmt="%s" index="3">std_logic</arg>
+</msg>
+
+<msg type="error" file="HDLCompiler" num="1728" delta="new" >"D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 140: Type error near <arg fmt="%s" index="1">mem_write</arg> ; current type <arg fmt="%s" index="2">std_logic</arg>; expected type <arg fmt="%s" index="3">std_logic_vector</arg>
+</msg>
+
+<msg type="error" file="HDLCompiler" num="69" delta="new" >"D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 146: &lt;<arg fmt="%s" index="1">decod_ri</arg>&gt; is not declared.
+</msg>
+
+<msg type="error" file="HDLCompiler" num="192" delta="new" >"D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 146: Actual of formal <arg fmt="%s" index="1">out</arg> port <arg fmt="%s" index="2">decod_ri</arg> cannot be an expression
+</msg>
+
+<msg type="error" file="HDLCompiler" num="854" delta="old" >"D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 16: Unit &lt;<arg fmt="%s" index="1">behavioral</arg>&gt; ignored due to previous errors.
 </msg>
 
 </messages>

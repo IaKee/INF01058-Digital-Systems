@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity control_ahmes is
+entity control is
     Port( 
 	    CLOCK: in std_logic;
         RESET: in std_logic;
@@ -38,9 +38,9 @@ entity control_ahmes is
 		-- controle da memoria
 		--mem_read: out  std_logic; -- nao utilizado
 		mem_write: out std_logic);	
-	end control_ahmes;
+	end control;
 
-architecture Behavioral of control_ahmes is
+architecture Behavioral of control is
     type state_type is (S0, S1, S2, S3, S4, S5, S6, S7, S8);
 	signal next_state, current_state: state_type;
 	signal RI_decod: std_logic_vector(23 downto 0);
