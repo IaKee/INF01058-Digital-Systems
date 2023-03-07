@@ -1,0 +1,4 @@
+vhdtdtfi -lib work datapath.vhd -prj Ahmes -o datapath.spl -module datapath -template D:/Xilinx/14.7/ISE_DS/ISE//data/splfile.tft -deleteonerror 
+spl2sym -intstyle ise -family artix7 datapath.spl {D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/datapath.sym} 
+vhdtdtfi -lib work datapath.vhd -prj Ahmes -o datapath.spl -module datapath -template D:/Xilinx/14.7/ISE_DS/ISE//data/splfile.tft -deleteonerror 
+spl2sym -intstyle ise -family artix7 datapath.spl {D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/datapath.sym} 

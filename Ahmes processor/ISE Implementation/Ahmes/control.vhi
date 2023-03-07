@@ -1,5 +1,5 @@
 
--- VHDL Instantiation Created from source file control.vhd -- 11:20:32 03/02/2023
+-- VHDL Instantiation Created from source file control.vhd -- 22:10:44 03/06/2023
 --
 -- Notes: 
 -- 1) This instantiation template has been automatically generated using types
@@ -10,7 +10,7 @@
 	PORT(
 		CLOCK : IN std_logic;
 		RESET : IN std_logic;
-		reg_RI : IN std_logic_vector(7 downto 0);
+		DECOD_RI : IN std_logic_vector(23 downto 0);
 		reg_N : IN std_logic;
 		reg_Z : IN std_logic;
 		reg_V : IN std_logic;
@@ -30,14 +30,14 @@
 		sel_ULA : OUT std_logic_vector(3 downto 0);
 		sel_MUXREM : OUT std_logic;
 		sel_MUXRDM : OUT std_logic;
-		mem_write : OUT std_logic
+		mem_write : OUT std_logic_vector(0 to 0)
 		);
 	END COMPONENT;
 
 	Inst_control: control PORT MAP(
 		CLOCK => ,
 		RESET => ,
-		reg_RI => ,
+		DECOD_RI => ,
 		reg_N => ,
 		reg_Z => ,
 		reg_V => ,

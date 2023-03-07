@@ -108,18 +108,334 @@ Cores Search Directories           : {"ipcore_dir"  }
 =========================================================================
 *                          HDL Parsing                                  *
 =========================================================================
+Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\ipcore_dir\mem.vhd" into library work
+Parsing entity <mem>.
+Parsing architecture <mem_a> of entity <mem>.
+Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" into library work
+Parsing entity <datapath>.
+Parsing architecture <Behavioral> of entity <datapath>.
+Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\control.vhd" into library work
+Parsing entity <control>.
+Parsing architecture <Behavioral> of entity <control>.
 Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" into library work
-ERROR:HDLCompiler:104 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 6: Cannot find <control_ahmes> in library <control_ahmes>. Please ensure that the library was compiled, and that a library and a use clause are present in the VHDL file.
 Parsing entity <main>.
-ERROR:HDLCompiler:854 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 8: Unit <main> ignored due to previous errors.
 Parsing architecture <Behavioral> of entity <main>.
-ERROR:HDLCompiler:374 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" Line 14: Entity <main> is not yet compiled.
-VHDL file D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd ignored due to errors
+
+=========================================================================
+*                            HDL Elaboration                            *
+=========================================================================
+
+Elaborating entity <main> (architecture <Behavioral>) from library <work>.
+
+Elaborating entity <control> (architecture <Behavioral>) from library <work>.
+INFO:HDLCompiler:679 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\control.vhd" Line 279. Case statement is complete. others clause is never selected
+
+Elaborating entity <datapath> (architecture <Behavioral>) from library <work>.
+
+Elaborating entity <mem> (architecture <mem_a>) from library <work>.
+
+=========================================================================
+*                           HDL Synthesis                               *
+=========================================================================
+
+Synthesizing Unit <main>.
+    Related source file is "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd".
+INFO:Xst:3210 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" line 98: Output port <load_RDM> of the instance <PC> is unconnected or connected to loadless signal.
+INFO:Xst:3210 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" line 98: Output port <load_RI> of the instance <PC> is unconnected or connected to loadless signal.
+    Summary:
+	no macro.
+Unit <main> synthesized.
+
+Synthesizing Unit <control>.
+    Related source file is "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\control.vhd".
+WARNING:Xst:653 - Signal <load_RI> is used but never assigned. This sourceless signal will be automatically connected to value GND.
+    Found 4-bit register for signal <current_state>.
+    Found 16x1-bit Read Only RAM for signal <current_state[3]_PWR_6_o_Mux_58_o>
+WARNING:Xst:737 - Found 1-bit latch for signal <next_state<3>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <next_state<2>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <next_state<1>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+WARNING:Xst:737 - Found 1-bit latch for signal <next_state<0>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+    Summary:
+	inferred   1 RAM(s).
+	inferred   4 D-type flip-flop(s).
+	inferred   4 Latch(s).
+	inferred 131 Multiplexer(s).
+Unit <control> synthesized.
+
+Synthesizing Unit <datapath>.
+    Related source file is "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd".
+    Found 1-bit register for signal <flag_N>.
+    Found 1-bit register for signal <flag_Z>.
+    Found 1-bit register for signal <flag_V>.
+    Found 1-bit register for signal <flag_C>.
+    Found 1-bit register for signal <flag_B>.
+    Found 8-bit register for signal <reg_AC>.
+    Found 8-bit register for signal <reg_RI_op>.
+    Found 8-bit register for signal <reg_REM>.
+    Found 8-bit register for signal <reg_RDM>.
+    Found 8-bit register for signal <reg_PC>.
+    Found 8-bit adder for signal <reg_PC[7]_GND_12_o_add_0_OUT> created at line 1241.
+    Found 9-bit adder for signal <GND_12_o_GND_12_o_add_16_OUT> created at line 254.
+    Found 9-bit subtractor for signal <GND_12_o_GND_12_o_sub_21_OUT<8:0>> created at line 262.
+    Found 9-bit 12-to-1 multiplexer for signal <ULA_op> created at line 252.
+    Summary:
+	inferred   2 Adder/Subtractor(s).
+	inferred  45 D-type flip-flop(s).
+	inferred  19 Multiplexer(s).
+Unit <datapath> synthesized.
+
+=========================================================================
+HDL Synthesis Report
+
+Macro Statistics
+# RAMs                                                 : 1
+ 16x1-bit single-port Read Only RAM                    : 1
+# Adders/Subtractors                                   : 2
+ 8-bit adder                                           : 1
+ 9-bit addsub                                          : 1
+# Registers                                            : 11
+ 1-bit register                                        : 5
+ 4-bit register                                        : 1
+ 8-bit register                                        : 5
+# Latches                                              : 4
+ 1-bit latch                                           : 4
+# Multiplexers                                         : 150
+ 1-bit 2-to-1 multiplexer                              : 98
+ 4-bit 2-to-1 multiplexer                              : 33
+ 8-bit 2-to-1 multiplexer                              : 3
+ 9-bit 2-to-1 multiplexer                              : 16
+
+=========================================================================
+INFO:Xst:1767 - HDL ADVISOR - Resource sharing has identified that some arithmetic operations in this design can share the same physical resources for reduced device utilization. For improved clock frequency you may try to disable resource sharing.
+
+=========================================================================
+*                       Advanced HDL Synthesis                          *
+=========================================================================
+
+Reading core <ipcore_dir/mem.ngc>.
+Loading core <mem> for timing and area information for instance <mem_op>.
+
+Synthesizing (advanced) Unit <control>.
+INFO:Xst:3218 - HDL ADVISOR - The RAM <Mram_current_state[3]_PWR_6_o_Mux_58_o> will be implemented on LUTs either because you have described an asynchronous read or because of currently unsupported block RAM features. If you have described an asynchronous read, making it synchronous would allow you to take advantage of available block RAM resources, for optimized device usage and improved timings. Please refer to your documentation for coding guidelines.
+    -----------------------------------------------------------------------
+    | ram_type           | Distributed                         |          |
+    -----------------------------------------------------------------------
+    | Port A                                                              |
+    |     aspect ratio   | 16-word x 1-bit                     |          |
+    |     weA            | connected to signal <GND>           | high     |
+    |     addrA          | connected to signal <current_state> |          |
+    |     diA            | connected to signal <GND>           |          |
+    |     doA            | connected to internal node          |          |
+    -----------------------------------------------------------------------
+Unit <control> synthesized (advanced).
+
+Synthesizing (advanced) Unit <datapath>.
+The following registers are absorbed into counter <reg_PC>: 1 register on signal <reg_PC>.
+Unit <datapath> synthesized (advanced).
+
+=========================================================================
+Advanced HDL Synthesis Report
+
+Macro Statistics
+# RAMs                                                 : 1
+ 16x1-bit single-port distributed Read Only RAM        : 1
+# Adders/Subtractors                                   : 1
+ 9-bit addsub                                          : 1
+# Counters                                             : 1
+ 8-bit up counter                                      : 1
+# Registers                                            : 41
+ Flip-Flops                                            : 41
+# Multiplexers                                         : 149
+ 1-bit 2-to-1 multiplexer                              : 98
+ 4-bit 2-to-1 multiplexer                              : 33
+ 8-bit 2-to-1 multiplexer                              : 2
+ 9-bit 2-to-1 multiplexer                              : 16
+
+=========================================================================
+
+=========================================================================
+*                         Low Level Synthesis                           *
+=========================================================================
+
+Optimizing unit <main> ...
+
+Optimizing unit <control> ...
+
+Optimizing unit <datapath> ...
+WARNING:Xst:1710 - FF/Latch <PO/flag_Z> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/flag_V> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/flag_C> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/flag_B> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RDM_0> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RDM_1> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RDM_2> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RDM_3> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RDM_4> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RDM_5> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RDM_6> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RDM_7> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/flag_N> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_AC_0> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_REM_7> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_REM_6> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_REM_5> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_REM_4> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_REM_3> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_REM_2> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_REM_1> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_REM_0> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_AC_7> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_AC_6> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_AC_5> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_AC_4> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_AC_3> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_AC_2> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_AC_1> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RI_op_0> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RI_op_1> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RI_op_2> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RI_op_3> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RI_op_4> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RI_op_5> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RI_op_6> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <PO/reg_RI_op_7> (without init value) has a constant value of 0 in block <main>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:2677 - Node <PC/current_state_3> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PC/current_state_2> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PC/current_state_1> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PC/current_state_0> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PC/next_state_2> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PC/next_state_1> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PC/next_state_0> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PC/next_state_3> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PO/reg_PC_7> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PO/reg_PC_6> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PO/reg_PC_5> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PO/reg_PC_4> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PO/reg_PC_3> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PO/reg_PC_2> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PO/reg_PC_1> of sequential type is unconnected in block <main>.
+WARNING:Xst:2677 - Node <PO/reg_PC_0> of sequential type is unconnected in block <main>.
+
+Mapping all equations...
+Building and optimizing final netlist ...
+Found area constraint ratio of 100 (+ 5) on block main, actual ratio is 0.
+
+Final Macro Processing ...
+
+=========================================================================
+Final Register Report
+
+Found no macro
+=========================================================================
+
+=========================================================================
+*                           Partition Report                            *
+=========================================================================
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+=========================================================================
+*                            Design Summary                             *
+=========================================================================
+
+Top Level Output File Name         : main.ngc
+
+Primitive and Black Box Usage:
+------------------------------
+# BELS                             : 3
+#      GND                         : 2
+#      VCC                         : 1
+# RAMS                             : 1
+#      RAMB18E1                    : 1
+# Clock Buffers                    : 1
+#      BUFGP                       : 1
+
+Device utilization summary:
+---------------------------
+
+Selected Device : 7a100tcsg324-3 
+
+
+Slice Logic Utilization: 
+
+Slice Logic Distribution: 
+ Number of LUT Flip Flop pairs used:      0
+   Number with an unused Flip Flop:       0  out of      0         
+   Number with an unused LUT:             0  out of      0         
+   Number of fully used LUT-FF pairs:     0  out of      0         
+   Number of unique control sets:         0
+
+IO Utilization: 
+ Number of IOs:                          10
+ Number of bonded IOBs:                   1  out of    210     0%  
+
+Specific Feature Utilization:
+ Number of Block RAM/FIFO:                1  out of    135     0%  
+    Number using Block RAM only:          1
+ Number of BUFG/BUFGCTRLs:                1  out of     32     3%  
+
+---------------------------
+Partition Resource Summary:
+---------------------------
+
+  No Partitions were found in this design.
+
+---------------------------
+
+
+=========================================================================
+Timing Report
+
+NOTE: THESE TIMING NUMBERS ARE ONLY A SYNTHESIS ESTIMATE.
+      FOR ACCURATE TIMING INFORMATION PLEASE REFER TO THE TRACE REPORT
+      GENERATED AFTER PLACE-and-ROUTE.
+
+Clock Information:
+------------------
+-----------------------------------+------------------------+-------+
+Clock Signal                       | Clock buffer(FF name)  | Load  |
+-----------------------------------+------------------------+-------+
+CLOCK                              | BUFGP                  | 1     |
+-----------------------------------+------------------------+-------+
+
+Asynchronous Control Signals Information:
+----------------------------------------
+No asynchronous control signals found in this design
+
+Timing Summary:
+---------------
+Speed Grade: -3
+
+   Minimum period: No path found
+   Minimum input arrival time before clock: No path found
+   Maximum output required time after clock: No path found
+   Maximum combinational path delay: No path found
+
+Timing Details:
+---------------
+All values displayed in nanoseconds (ns)
+
+=========================================================================
+
+Cross Clock Domains Report:
+--------------------------
+
+=========================================================================
+
+
+Total REAL time to Xst completion: 6.00 secs
+Total CPU time to Xst completion: 6.23 secs
+ 
 --> 
 
-Total memory usage is 4480500 kilobytes
+Total memory usage is 4694728 kilobytes
 
-Number of errors   :    3 (   0 filtered)
-Number of warnings :    0 (   0 filtered)
-Number of infos    :    0 (   0 filtered)
+Number of errors   :    0 (   0 filtered)
+Number of warnings :   58 (   0 filtered)
+Number of infos    :    4 (   0 filtered)
 

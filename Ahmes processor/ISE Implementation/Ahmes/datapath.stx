@@ -12,7 +12,7 @@ Total CPU time to Xst completion: 0.06 secs
 Total REAL time to Xst completion: 0.00 secs
 Total CPU time to Xst completion: 0.06 secs
  
---> Reading design: control.prj
+--> Reading design: datapath.prj
 
 TABLE OF CONTENTS
   1) Synthesis Options Summary
@@ -39,17 +39,20 @@ TABLE OF CONTENTS
 =========================================================================
 *                          HDL Parsing                                  *
 =========================================================================
-Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\control.vhd" into library work
-Parsing entity <control>.
-Parsing architecture <Behavioral> of entity <control>.
+Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\ipcore_dir\mem.vhd" into library work
+Parsing entity <mem>.
+Parsing architecture <mem_a> of entity <mem>.
+Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" into library work
+Parsing entity <datapath>.
+Parsing architecture <Behavioral> of entity <datapath>.
 
 
-Total REAL time to Xst completion: 4.00 secs
-Total CPU time to Xst completion: 3.75 secs
+Total REAL time to Xst completion: 3.00 secs
+Total CPU time to Xst completion: 3.77 secs
  
 --> 
 
-Total memory usage is 4473920 kilobytes
+Total memory usage is 4474496 kilobytes
 
 Number of errors   :    0 (   0 filtered)
 Number of warnings :    0 (   0 filtered)

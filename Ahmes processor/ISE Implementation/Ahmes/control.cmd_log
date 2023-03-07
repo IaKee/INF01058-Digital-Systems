@@ -2,3 +2,8 @@ vhdtdtfi -lib work control.vhd -prj Ahmes -o control.spl -module control -templa
 spl2sym -intstyle ise -family artix7 control.spl {D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/control.sym} 
 vhdtdtfi -prj Ahmes -o "D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/control.vhi" -module control -template D:/Xilinx/14.7/ISE_DS/ISE//data/vhdlinst.tft -deleteonerror -lib work control.vhd 
 vhdtdtfi -prj Ahmes -o "D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/control.vhi" -module control -template D:/Xilinx/14.7/ISE_DS/ISE//data/vhdlinst.tft -deleteonerror -lib work control.vhd 
+vhdtdtfi -lib work control.vhd -prj Ahmes -o control.spl -module control -template D:/Xilinx/14.7/ISE_DS/ISE//data/splfile.tft -deleteonerror 
+spl2sym -intstyle ise -family artix7 control.spl {D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/control.sym} 
+vhdtdtfi -prj Ahmes -o "D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/control.vhi" -module control -template D:/Xilinx/14.7/ISE_DS/ISE//data/vhdlinst.tft -deleteonerror -lib work control.vhd 
+vhdtdtfi -lib work control.vhd -prj Ahmes -o control.spl -module control -template D:/Xilinx/14.7/ISE_DS/ISE//data/splfile.tft -deleteonerror 
+spl2sym -intstyle ise -family artix7 control.spl {D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/control.sym} 

@@ -22,8 +22,8 @@ entity datapath is
         load_B: in std_logic;
         
         -- seletores
-        sel_MUXREM: in std_logic;
-        sel_MUXRDM: in std_logic;
+        sel_MUXREM: in std_logic_vector(0 downto 0);
+        sel_MUXRDM: in std_logic_vector(0 downto 0);
         sel_ULA: in std_logic_vector(3 downto 0);
         
         -- controle da memoria
@@ -231,7 +231,7 @@ architecture Behavioral of datapath is
 
         process(sel_MUXREM, reg_PC, reg_MUXRDM) -- MUX_REM
             begin
-                if(sel_MUXREM = '0') then
+                if(sel_MUXREM = "0") then
                     reg_MUXREM <= reg_PC;
                 else
                     reg_MUXREM <= reg_MUXRDM;
@@ -240,7 +240,7 @@ architecture Behavioral of datapath is
 
         process(sel_MUXRDM, reg_mem, reg_AC) -- MUX_RDM
             begin
-                if(sel_MUXRDM = '0') then
+                if(sel_MUXRDM = "0") then
                     reg_MUXRDM <= reg_mem;
                 else
                     reg_MUXRDM <= reg_AC;
@@ -335,11 +335,11 @@ architecture Behavioral of datapath is
 					when "11100010" => reg_DECOD_RI(21) <= '1'; -- 226 ROR
 					when "11100011" => reg_DECOD_RI(22) <= '1'; -- 227 ROL
 					when "11110000" => reg_DECOD_RI(23) <= '1'; -- 240 HLT
-					when others => reg_DECOD_RI <= reg_DECOD_RI;
+					when others => reg_DECOD_RI <= "000000000000000000000000";
 					end case;
 			end process;
         
-        -- conexões
+        -- conexï¿½es
         reg_N <= flag_N;
         reg_Z <= flag_Z;
         reg_V <= flag_V;
