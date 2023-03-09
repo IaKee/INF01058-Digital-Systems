@@ -4,13 +4,13 @@ Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
 
 
 Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.06 secs
+Total CPU time to Xst completion: 0.08 secs
  
 --> Parameter xsthdpdir set to xst
 
 
 Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.06 secs
+Total CPU time to Xst completion: 0.08 secs
  
 --> Reading design: main.prj
 
@@ -140,8 +140,8 @@ Elaborating entity <mem> (architecture <mem_a>) from library <work>.
 
 Synthesizing Unit <main>.
     Related source file is "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd".
-INFO:Xst:3210 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" line 98: Output port <load_RDM> of the instance <PC> is unconnected or connected to loadless signal.
-INFO:Xst:3210 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" line 98: Output port <load_RI> of the instance <PC> is unconnected or connected to loadless signal.
+INFO:Xst:3210 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" line 97: Output port <load_RDM> of the instance <PC> is unconnected or connected to loadless signal.
+INFO:Xst:3210 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\main.vhd" line 97: Output port <load_RI> of the instance <PC> is unconnected or connected to loadless signal.
     Summary:
 	no macro.
 Unit <main> synthesized.
@@ -429,7 +429,7 @@ Cross Clock Domains Report:
 
 
 Total REAL time to Xst completion: 6.00 secs
-Total CPU time to Xst completion: 6.23 secs
+Total CPU time to Xst completion: 6.57 secs
  
 --> 
 

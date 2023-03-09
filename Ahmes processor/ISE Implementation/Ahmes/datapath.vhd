@@ -8,346 +8,363 @@ entity datapath is
         CLOCK: in std_logic;
         RESET: in std_logic;
 
-        -- controle dos registradores
+        -- register control inputs
         inc_PC: in std_logic;
         load_PC: in std_logic;
         load_AC: in std_logic;
-        load_REM: in std_logic;
-        load_RDM: in std_logic;
-        load_RI: in std_logic;
+        load_MA: in std_logic; -- memory address register
+        load_MD: in std_logic; -- memory data register
+        load_I: in std_logic;  -- instruction register
         load_N: in std_logic;
         load_Z: in std_logic;
         load_V: in std_logic;
         load_C: in std_logic;
         load_B: in std_logic;
         
-        -- seletores
-        sel_MUXREM: in std_logic_vector(0 downto 0);
-        sel_MUXRDM: in std_logic_vector(0 downto 0);
-        sel_ULA: in std_logic_vector(3 downto 0);
+        -- selectors
+        sel_MUX_MAR: in std_logic_vector(0 downto 0);  -- selects which data reg_MA should recieve (between reg_PC or reg_MD)
+        sel_MUX_MDR: in std_logic_vector(0 downto 0);  -- selects which data reg_MD should recieve (between reg_MEM or reg_AC)
+        sel_ALU: in std_logic_vector(3 downto 0);  -- selects which arithmetic operation ALU should execute
         
-        -- controle da memoria
-        --mem_read: in std_logic_vector(0 downto 0);  -- nao utilizado
+        -- memory control
+        mem_read: in std_logic_vector(0 downto 0);
         mem_write: in std_logic_vector(0 downto 0);
 
-        -- flags de estado
+        -- ALU flags
         reg_N: out std_logic;
         reg_Z: out std_logic;
         reg_V: out std_logic;
         reg_C: out std_logic;
         reg_B: out std_logic;
         
-        DECOD_RI: out std_logic_vector(23 downto 0));
+        -- instruction flags (from reg_I)
+        instruction_flags: out std_logic_vector(23 downto 0));
     end datapath;
 
 architecture Behavioral of datapath is
-    -- registradores
+    -- registers
     signal reg_PC: std_logic_vector(7 downto 0);
     signal reg_AC: std_logic_vector (7 downto 0);
-    signal reg_REM: std_logic_vector(7 downto 0);
-    signal reg_RDM: std_logic_vector(7 downto 0);
-    signal reg_RI_op: std_logic_vector(7 downto 0);
-    signal reg_MUXREM: std_logic_vector(7 downto 0);
-    signal reg_MUXRDM: std_logic_vector(7 downto 0);
-    signal reg_DECOD: std_logic_vector(7 downto 0);
-    signal reg_mem: std_logic_vector(7 downto 0);
-    signal reg_ULA: std_logic_vector(7 downto 0);
+    signal reg_MA: std_logic_vector(7 downto 0);
+    signal reg_MD: std_logic_vector(7 downto 0);
+    signal MA_MUX_out: std_logic_vector(7 downto 0);
+    signal MD_MUX_out: std_logic_vector(7 downto 0);
+    signal ALU_out: std_logic_vector(7 downto 0);
+    signal MEM_out: std_logic_vector(7 downto 0);
+    signal IR_DECOD_out: std_logic_vector(23 downto 0);
     
-    -- flags (para evitar erro de nao ser possivel ler de inout)
+    -- AC flags (for upkeeping internal values until the register update on rising edge)
     signal flag_N: std_logic;
     signal flag_Z: std_logic;
     signal flag_V: std_logic;
     signal flag_C: std_logic;
     signal flag_B: std_logic;
 
-    -- ULA
-    signal ULA_X: std_logic_vector(7 downto 0); -- reg_AC
-    signal ULA_Y: std_logic_vector(7 downto 0); -- reg_RDM;
-	signal ULA_op: std_logic_vector(8 downto 0); -- registrador operacional da ula
-	 
-    -- decod
-    signal reg_DECOD_RI: std_logic_vector(23 downto 0);
+    -- ALU
+    signal ALU_X: std_logic_vector(7 downto 0); -- recieves signals from reg_AC
+    signal ALU_Y: std_logic_vector(7 downto 0); -- recieves signals from reg_RDM;
+	signal ALU_op: std_logic_vector(8 downto 0); -- ALU operational signal
+    -- the extra bit is used for the overflow(V) flag
 
-    -- memoria (mem_ahmes) -- arrumar
-    COMPONENT mem
-	  PORT (
-		clka : IN STD_LOGIC;
-		wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-		addra : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-		dina : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-		douta : OUT STD_LOGIC_VECTOR(7 DOWNTO 0));
-	END COMPONENT;
+    -- BRAM memory component (mem_ahmes)
+    component mem
+	    port(
+            clka: in std_logic;
+            wea: in std_logic_vector(0 downto 0);
+            addra: in std_logic_vector(7 downto 0);
+            dina: in std_logic_vector(7 downto 0);
+            douta: out std_logic_vector(7 downto 0));
+	end component;
     
-    begin -- inicio behavioral
-        mem_op : mem -- MEM
+    begin  -- datapath behavioral start
+        
+        -- hw connections (not clock dependent)
+        reg_ALU <= std_logic_vector(ALU_op(7 downto 0));  -- updates ALU output with 7 lsb of ALU_op
+        ALU_X <= reg_AC;  -- retrieves ALU X from reg_AC (accumulator)
+        ALU_Y <= reg_MD;  -- retrieves ALU Y from reg_MD (memory data)
+        flag_C <= ALU_op(8);  -- carry flag
+        IR_DECOD_out <= instruction_flags;
+
+        mem_ahmes: mem
             port map(
                 clka => CLOCK,
                 wea => mem_write,
                 addra => reg_rem,
                 dina => reg_rem,
                 douta => reg_mem);
-		  
-        process(CLOCK, RESET) -- PC
+		
+        PC: process(CLOCK, RESET)  -- program counter register
+            -- standard register, has functions to reset, load values and increment internal value by 1
+            -- mainly recieves values from reg_MD
+            -- asynchronous reset
             begin
                 if(RESET = '1') then
                     reg_PC <= "00000000";
-                elsif(rising_edge(CLOCK)) then -- na subida do clock
+                elsif(rising_edge(CLOCK)) then
                     if(load_PC = '1') then
-                        reg_PC <= reg_RDM;
+                        reg_PC <= reg_MD;
                     elsif(inc_PC = '1') then
                         reg_PC <= std_logic_vector(unsigned(reg_PC) + 1);
-                    else
-                        reg_PC <= reg_PC;
                     end if;
                 end if;
             end process;
 				
-        process(CLOCK, RESET) -- AC
+        AC: process(CLOCK, RESET)  -- accumulator register
+            -- standard register, has functions to reset and load values
+            -- mainly recieves values from reg_ALU
+            -- asynchronous reset
             begin
                 if(RESET = '1') then
                     reg_AC <= "00000000";
-                elsif(rising_edge(CLOCK)) then -- na subida do clock
-                    if(load_AC = '1') then
-                        reg_AC <= std_logic_vector(reg_ULA(7 downto 0));
-                    else
-                        reg_AC <= reg_AC;
-                    end if;
+                elsif(rising_edge(CLOCK) and load_AC = '1') then
+                    reg_AC <= std_logic_vector(ALU_out(7 downto 0));
                 end if;
             end process;
         
-        process(CLOCK, RESET) -- reg N
+        -- ALU flag registers
+        regN: process(CLOCK, RESET)  -- negative flag register
+            -- standard register, has functions to reset and load values
+            -- mainly recieves values from internal signal flag_N
+            -- asynchronous reset
             begin
                 if(RESET = '1') then
-                    flag_N <= '0';
-                elsif(rising_edge(CLOCK)) then -- na subida do clock
-                    if(load_N = '1') then
-                        flag_N <= ULA_op(7); -- bit de sinal - msb do registrador AC
-                    else
-                        flag_N <= flag_N;
-                    end if;
+                    reg_N <= '0';
+                elsif(rising_edge(CLOCK) and load_N = '1') then
+                    reg_N <= flag_N;
                 end if;
             end process;
         
-        process(CLOCK, RESET) -- reg Z
+        regZ: process(CLOCK, RESET)  -- zero flag register
+            -- standard register, has functions to reset and load values
+            -- mainly recieves values from internal signal flag_Z
+            -- asynchronous reset
             begin
                 if(RESET = '1') then
-                    flag_Z <= '0';
-                elsif(rising_edge(CLOCK)) then -- na subida do clock
-                    if(load_Z = '1') then    
-                        flag_Z <= ULA_op(7) 
-                            and ULA_op(6)
-                            and ULA_op(5)
-                            and ULA_op(4)
-                            and ULA_op(3)
-                            and ULA_op(2)
-                            and ULA_op(1)
-                            and ULA_op(0);
-                    else
-                        flag_Z <= flag_Z;
-                    end if;
+                    reg_Z <= '0';
+                elsif(rising_edge(CLOCK) and load_Z = '1') then
+                    reg_Z <= flag_Z;
                 end if;
             end process;
 		  
-        process(CLOCK, RESET) -- reg V
+        regV: process(CLOCK, RESET) -- overflow flag register
+            -- standard register, has functions to reset and load values
+            -- mainly recieves values from internal signal flag_V
+            -- asynchronous reset
             begin
                 if(RESET = '1') then
-                    flag_V <= '0';
-                elsif(rising_edge(CLOCK)) then
-                    if(load_V = '1') then
-                        -- se uma operacao entre dois numeros positivos gerar um numero negativo
-                        -- sem carry - apenas p soma
-                        flag_V <= not(reg_AC(7) or reg_RDM(7)) and ULA_op(7) and not(ULA_op(8));
-                    else
-                        flag_V <= flag_V;
-                    end if;
+                    reg_V <= '0';
+                elsif(rising_edge(CLOCK) and load_V = '1') then
+                    reg_V <= flag_V;
                 end if;
             end process;
 				
-        process(CLOCK, RESET)  -- reg C
+        regC: process(CLOCK, RESET)  -- carry flag register
+            -- standard register, has functions to reset and load values
+            -- mainly recieves values from internal signal flag_C
+            -- asynchronous reset
             begin
                 if(RESET = '1') then
-                    flag_C <= '0';
-                elsif(rising_edge(CLOCK)) then
-                    if(load_C = '1') then
-                        flag_C <= ULA_op(8);  -- carry recebe msb de ula_op
-                    else
-                        flag_C <= flag_C;
-                    end if;
+                    reg_C <= '0';
+                elsif(rising_edge(CLOCK) and load_C = '1') then
+                    reg_C <= flag_C;
                 end if;
             end process;
 				
-        process(CLOCK, RESET)  -- reg B
+        regB: process(CLOCK, RESET)  -- borrow flag register
+            -- standard register, has functions to reset and load values
+            -- mainly recieves values from internal signal flag_B
+            -- asynchronous reset
             begin
                 if(RESET = '1') then
-                    flag_B <= '0';
-                elsif(rising_edge(CLOCK)) then
-                    if(load_B = '1') then
-                        flag_B <= ULA_op(7) and ULA_op(8);
-                    else
-                        flag_B <= flag_B;
-                    end if;
+                    reg_B <= '0';
+                elsif(rising_edge(CLOCK) and load_B = '1') then
+                    reg_B <= flag_B;
                 end if;
             end process;
-					 
         		
-        process (CLOCK, RESET) -- RI
+        IR: process (CLOCK, RESET) -- instruction register
+            -- standard register, has functions to reset and load values
+            -- recieves values from reg_MD
+            -- asynchronous reset    
             begin
                 if(RESET = '1') then
-                    reg_RI_op <= "00000000";
-                elsif (rising_edge(CLOCK)) then
-                    if (load_RI = '1') then
-                        reg_RI_op <= reg_RDM;
-                    else
-                        reg_RI_op <= reg_RI_op;
-                    end if;
+                    reg_I <= "00000000";
+                elsif(rising_edge(CLOCK) and load_RI = '1') then
+                    reg_RI <= reg_MD;
                 end if;
             end process;    
         
-        process(CLOCK, RESET) -- REM
+        MAR: process(CLOCK, RESET) -- memory address register
+            -- standard register, has functions to reset and load values
+            -- recieves values from MA_MUX_out
+            -- asynchronous reset 
             begin
                 if (RESET = '1') then
-                    reg_REM <= "00000000";
-                elsif (rising_edge(CLOCK)) then -- na subida do clock
-                    if (load_REM = '1') then
-                        reg_REM <= reg_MUXREM;
-                    else
-                        reg_REM <= reg_REM;
-                    end if;
+                    reg_MA <= "00000000";
+                elsif (rising_edge(CLOCK) and load_REM = '1') then
+                    reg_MA <= MA_MUX_out;
                 end if;
             end process;
 
-        process(CLOCK, RESET) -- RDM
+        MDR: process(CLOCK, RESET) -- memory data register
+            -- standard register, has functions to reset and load values
+            -- recieves values from MD_MUX_out
+            -- asynchronous reset 
             begin
                 if(RESET = '1') then
-                    reg_RDM <= "00000000";
-                elsif(rising_edge(CLOCK)) then
-                    if(load_RDM = '1') then
-                        reg_RDM <= reg_MUXRDM;
-                    else
-                        reg_RDM <= reg_RDM;
-                    end if;
+                    reg_MD <= "00000000";
+                elsif(rising_edge(CLOCK) and load_MD = '1') then
+                    reg_MD <= MD_MUX_out;
                 end if;
             end process;
 
-        process(sel_MUXREM, reg_PC, reg_MUXRDM) -- MUX_REM
+        MA_MUX: process(sel_MUX_MAR, reg_PC, reg_MD)  -- MA 2x1 multiplexer
+            -- 2x1 MUX, selecting between reg_PC and reg_MD
             begin
-                if(sel_MUXREM = "0") then
-                    reg_MUXREM <= reg_PC;
+                if(sel_MUX_MAR = "0") then
+                    MUX_MA_out <= reg_PC;
                 else
-                    reg_MUXREM <= reg_MUXRDM;
+                    MUX_MA_out <= reg_MD;
                 end if;
             end process;
 
-        process(sel_MUXRDM, reg_mem, reg_AC) -- MUX_RDM
+        MD_MUX: process(sel_MUX_MDR, MEM_out, reg_AC)  -- MD 2x1 multiplexer
+            -- 2x1 MUX, selecting between MEM_out and reg_AC
             begin
-                if(sel_MUXRDM = "0") then
-                    reg_MUXRDM <= reg_mem;
+                if(sel_MUX_MDR = "0") then
+                    MUX_MDR_out <= MEM_out;
                 else
-                    reg_MUXRDM <= reg_AC;
+                    MUX_MDR_out <= reg_AC;
                 end if;
             end process;
 				
-        process(sel_ULA, ULA_X, ULA_Y, flag_C) -- ULA
+        ALU: process(sel_ALU, ALU_X, ALU_Y, flag_C, ALU_op) -- arithmetic logic unit
+            -- Performs arithmetic and logical operations on two input operands
+            -- Output result is stored in ALU_op
+            -- Operation selected based on sel_ALU input
+            -- Available operations:
+            --  ADD - adds ALU_X and ALU_Y
+            --  OR - logical OR of ALU_X and ALU_Y
+            --  AND - logical AND of ALU_X and ALU_Y
+            --  NOT - bitwise complement of ALU_X
+            --  SUB - subtracts ALU_Y from ALU_X
+            --  SHR - right shift of ALU_X by 1 bit
+            --  SHL - left shift of ALU_X by 1 bit
+            --  ROR - right rotate of ALU_X by 1 bit
+            --  ROL - left rotate of ALU_X by 1 bit
+            --  NOP - no operation, ALU_op receives ALU_Y
             begin
-                case sel_ULA is
-                    when "0000" =>  -- operacao ADD
-                        ULA_op <= std_logic_vector(unsigned('0' & ULA_X) + unsigned('0' & ULA_Y));
-                    when "0001" =>  -- operacao OR
-                        ULA_op <= std_logic_vector(('0' & ULA_X) or ('0' & ULA_Y));
-                    when "0010" =>  -- operacao AND
-                        ULA_op <= std_logic_vector(('0' & ULA_X) and ('0' & ULA_Y));
-                    when "0011" =>  -- operacao NOT
-                        ULA_op <= std_logic_vector(not('0' & ULA_X));
-                    when "0100" =>  -- operacao SUB
-                        ULA_op <= std_logic_vector(unsigned('0' & ULA_X) - unsigned('0' & ULA_Y));
-                    when "0101" => -- operacao SHR
-                        -- equivalente a divisao por 2
-                        ULA_op(8) <= ULA_X(0);  -- carry recebe bit 0 do acumulador
-                        ULA_op(7) <= '0'; -- msb recebe 0
-                        ULA_op(6) <= ULA_X(7);
-                        ULA_op(5) <= ULA_X(6);
-                        ULA_op(4) <= ULA_X(5);
-                        ULA_op(3) <= ULA_X(4);
-                        ULA_op(2) <= ULA_X(3);
-                        ULA_op(1) <= ULA_X(2);
-                        ULA_op(0) <= ULA_X(1);
-                    when "0110" => -- operacao SHL
-                        -- equialente a multiplicacao por 2
-                        ULA_op(8) <= ULA_X(7);  -- carry recebe bit 7
-                        ULA_op(7) <= ULA_X(6); 
-                        ULA_op(6) <= ULA_X(5); 
-                        ULA_op(5) <= ULA_X(4); 
-                        ULA_op(4) <= ULA_X(3); 
-                        ULA_op(3) <= ULA_X(2); 
-                        ULA_op(2) <= ULA_X(1); 
-                        ULA_op(1) <= ULA_X(0); 
-                        ULA_op(0) <= '0';  -- lsb recebe 0
-                    when "0111" => -- operacao ROR
-                        ULA_op(8) <= ULA_X(0);  -- carry recebe bit 0 do acumulador
-                        ULA_op(7) <= flag_C; -- msb recebe carry
-                        ULA_op(6) <= ULA_X(7);
-                        ULA_op(5) <= ULA_X(6);
-                        ULA_op(4) <= ULA_X(5);
-                        ULA_op(3) <= ULA_X(4);
-                        ULA_op(2) <= ULA_X(3);
-                        ULA_op(1) <= ULA_X(2);
-                        ULA_op(0) <= ULA_X(1);
-                    when "1000" => -- operacao ROL
-                        ULA_op(8) <= ULA_X(7);  -- carry recebe bit 7
-                        ULA_op(7) <= ULA_X(6);
-                        ULA_op(6) <= ULA_X(5);
-                        ULA_op(5) <= ULA_X(4);
-                        ULA_op(4) <= ULA_X(3);
-                        ULA_op(3) <= ULA_X(2);
-                        ULA_op(2) <= ULA_X(1);
-                        ULA_op(1) <= ULA_X(0);
-                        ULA_op(0) <= flag_C;  -- lsb recebe carry
-                    when others => -- operacao NOP
-                        ULA_op <= '0' & ULA_Y;  
+                -- negative flag
+                flag_N <= ALU_op(7); -- accumulator msb
+                -- zero flag
+                if(unsigned(ALU_op(7 downto 0)) = 0) then
+                    flag_Z <= '1';
+                else
+                    flag_Z <= '0';
+                end if;
+
+                case sel_ALU is
+                    when "0000" =>  -- ADD
+                        ALU_op <= std_logic_vector(unsigned('0' & ALU_X) + unsigned('0' & ALU_Y));
+                        -- checks for overflow
+                        if (ALU_X(7) = '0' and ALU_Y(7) = '0' and ALU_op(7) = '1') then
+                            flag_V <= '1';
+                        else
+                            flag_V <= '0';
+                        end if;
+                    when "0001" =>  -- OR
+                        ALU_op <= std_logic_vector(('0' & ALU_X) or ('0' & ALU_Y));
+                    when "0010" =>  -- AND
+                        ALU_op <= std_logic_vector(('0' & ALU_X) and ('0' & ALU_Y));
+                    when "0011" =>  -- NOT
+                        ALU_op <= std_logic_vector(not('0' & ALU_X));
+                    when "0100" =>  -- SUB
+                        ALU_op <= std_logic_vector(unsigned('0' & ALU_X) - unsigned('0' & ALU_Y));
+                        -- borrow flag
+                        flag_B <= ALU_op(7) and ALU_op(8);
+                        -- checks for overflow
+                        if (ALU_X(7) = '1' and ALU_Y(7) = '1' and ALU_op(7) = '0') then
+                            flag_V <= '1';
+                        else
+                            flag_V <= '0';
+                        end if;
+                    when "0101" => -- SHR
+                        ALU_op(8) <= ALU_X(0);  -- ALU_op, and by consequence carry recieves reg_AC lsb
+                        ALU_op(7) <= '0'; -- ULA_out msb recieves 0
+                        ALU_op(6) <= ALU_X(7);
+                        ALU_op(5) <= ALU_X(6);
+                        ALU_op(4) <= ALU_X(5);
+                        ALU_op(3) <= ALU_X(4);
+                        ALU_op(2) <= ALU_X(3);
+                        ALU_op(1) <= ALU_X(2);
+                        ALU_op(0) <= ALU_X(1);
+                    when "0110" => -- SHL
+                        ALU_op(8) <= ALU_X(7);  -- ALU_op, and by consequence carry recieves reg_AC msb
+                        ALU_op(7) <= ALU_X(6); 
+                        ALU_op(6) <= ALU_X(5); 
+                        ALU_op(5) <= ALU_X(4); 
+                        ALU_op(4) <= ALU_X(3); 
+                        ALU_op(3) <= ALU_X(2); 
+                        ALU_op(2) <= ALU_X(1); 
+                        ALU_op(1) <= ALU_X(0); 
+                        ALU_op(0) <= '0'; -- ULA_out lsb recieves 0
+                    when "0111" => -- ROR
+                        ALU_op(8) <= ALU_X(0);
+                        ALU_op(7) <= flag_C;
+                        ALU_op(6) <= ALU_X(7);
+                        ALU_op(5) <= ALU_X(6);
+                        ALU_op(4) <= ALU_X(5);
+                        ALU_op(3) <= ALU_X(4);
+                        ALU_op(2) <= ALU_X(3);
+                        ALU_op(1) <= ALU_X(2);
+                        ALU_op(0) <= ALU_X(1);
+                    when "1000" => -- ROL
+                        ALU_op(8) <= ALU_X(7);
+                        ALU_op(7) <= ALU_X(6);
+                        ALU_op(6) <= ALU_X(5);
+                        ALU_op(5) <= ALU_X(4);
+                        ALU_op(4) <= ALU_X(3);
+                        ALU_op(3) <= ALU_X(2);
+                        ALU_op(2) <= ALU_X(1);
+                        ALU_op(1) <= ALU_X(0);
+                        ALU_op(0) <= flag_C;
+                    when others => -- NOP
+                        ALU_op <= '0' & ALU_Y;  
                 end case;
             end process;   
         
-        process(reg_RI_op)  -- reg_DECOD_RI
-			begin
-				reg_DECOD_RI <= "000000000000000000000000";
+        IR_DECOD: process(reg_I)  -- IR_DECOD, used for setting instruction_flags
+			-- decodes reg_I signal setting a 24 bits vector, with flags for each of
+            -- the processor instructions
+            begin
+				IR_DECOD_out <= "000000000000000000000000";
 				case reg_RI_op is
-					when "00000000" => reg_DECOD_RI(0)  <= '1'; -- 00 NOP
-					when "00010000" => reg_DECOD_RI(1)  <= '1'; -- 16 STA
-					when "00100000" => reg_DECOD_RI(2)  <= '1'; -- 32 LDA
-					when "00110000" => reg_DECOD_RI(3)  <= '1'; -- 48 ADD
-					when "01000000" => reg_DECOD_RI(4)  <= '1'; -- 64 OR
-					when "01010000" => reg_DECOD_RI(5)  <= '1'; -- 80 AND
-					when "01100000" => reg_DECOD_RI(6)  <= '1'; -- 96 NOT
-					when "01110000" => reg_DECOD_RI(7)  <= '1'; -- 112 SUB
-					when "10000000" => reg_DECOD_RI(8)  <= '1'; -- 128 JMP
-					when "10010000" => reg_DECOD_RI(9)  <= '1'; -- 144 JN
-					when "10010100" => reg_DECOD_RI(10) <= '1'; -- 148 JP
-					when "10011000" => reg_DECOD_RI(11) <= '1'; -- 152 JV
-					when "10011100" => reg_DECOD_RI(12) <= '1'; -- 156 JNV
-					when "10100000" => reg_DECOD_RI(13) <= '1'; -- 160 JZ
-					when "10100100" => reg_DECOD_RI(14) <= '1'; -- 164 JNZ
-					when "10110000" => reg_DECOD_RI(15) <= '1'; -- 176 JC
-					when "10110100" => reg_DECOD_RI(16) <= '1'; -- 180 JNC
-					when "10111000" => reg_DECOD_RI(17) <= '1'; -- 184 JB
-					when "10111100" => reg_DECOD_RI(18) <= '1'; -- 188 JNB
-					when "11100000" => reg_DECOD_RI(19) <= '1'; -- 224 SHR
-					when "11100001" => reg_DECOD_RI(20) <= '1'; -- 225 SHL
-					when "11100010" => reg_DECOD_RI(21) <= '1'; -- 226 ROR
-					when "11100011" => reg_DECOD_RI(22) <= '1'; -- 227 ROL
-					when "11110000" => reg_DECOD_RI(23) <= '1'; -- 240 HLT
-					when others => reg_DECOD_RI <= "000000000000000000000000";
-					end case;
+					when "00000000" => IR_DECOD_out(0)  <= '1'; -- 00 NOP
+					when "00010000" => IR_DECOD_out(1)  <= '1'; -- 16 STA
+					when "00100000" => IR_DECOD_out(2)  <= '1'; -- 32 LDA
+					when "00110000" => IR_DECOD_out(3)  <= '1'; -- 48 ADD
+					when "01000000" => IR_DECOD_out(4)  <= '1'; -- 64 OR
+					when "01010000" => IR_DECOD_out(5)  <= '1'; -- 80 AND
+					when "01100000" => IR_DECOD_out(6)  <= '1'; -- 96 NOT
+					when "01110000" => IR_DECOD_out(7)  <= '1'; -- 112 SUB
+					when "10000000" => IR_DECOD_out(8)  <= '1'; -- 128 JMP
+					when "10010000" => IR_DECOD_out(9)  <= '1'; -- 144 JN
+					when "10010100" => IR_DECOD_out(10) <= '1'; -- 148 JP
+					when "10011000" => IR_DECOD_out(11) <= '1'; -- 152 JV
+					when "10011100" => IR_DECOD_out(12) <= '1'; -- 156 JNV
+					when "10100000" => IR_DECOD_out(13) <= '1'; -- 160 JZ
+					when "10100100" => IR_DECOD_out(14) <= '1'; -- 164 JNZ
+					when "10110000" => IR_DECOD_out(15) <= '1'; -- 176 JC
+					when "10110100" => IR_DECOD_out(16) <= '1'; -- 180 JNC
+					when "10111000" => IR_DECOD_out(17) <= '1'; -- 184 JB
+					when "10111100" => IR_DECOD_out(18) <= '1'; -- 188 JNB
+					when "11100000" => IR_DECOD_out(19) <= '1'; -- 224 SHR
+					when "11100001" => IR_DECOD_out(20) <= '1'; -- 225 SHL
+					when "11100010" => IR_DECOD_out(21) <= '1'; -- 226 ROR
+					when "11100011" => IR_DECOD_out(22) <= '1'; -- 227 ROL
+					when "11110000" => IR_DECOD_out(23) <= '1'; -- 240 HLT
+					when others => IR_DECOD_out <= "000000000000000000000000";  -- 00 NOP
+                end case;
 			end process;
-        
-        -- conex�es
-        reg_N <= flag_N;
-        reg_Z <= flag_Z;
-        reg_V <= flag_V;
-        reg_C <= flag_C;
-        reg_B <= flag_B;
-        DECOD_RI <= reg_DECOD_RI;
-        reg_ULA <= std_logic_vector(ULA_op(7 downto 0));
-        ULA_X <= reg_AC;  -- recupera valor X do acumulador
-        ULA_Y <= reg_RDM;  -- recupera valor Y de uma posicao da mem?ria
     end Behavioral;
 

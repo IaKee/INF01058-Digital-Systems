@@ -111,10 +111,12 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1678152494" xil_pn:in_ck="-2720641302308795653" xil_pn:name="TRANEXT_xstsynthesize_virtex6" xil_pn:prop_ck="6605465705760815701" xil_pn:start_ts="1678152485">
+    <transform xil_pn:end_ts="1678320485" xil_pn:in_ck="-2720641302308795653" xil_pn:name="TRANEXT_xstsynthesize_virtex6" xil_pn:prop_ck="6605465705760815701" xil_pn:start_ts="1678320472">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="WarningsGenerated"/>
       <status xil_pn:value="ReadyToRun"/>
+      <status xil_pn:value="OutOfDateForInputs"/>
+      <status xil_pn:value="InputChanged"/>
       <outfile xil_pn:name="_xmsgs/xst.xmsgs"/>
       <outfile xil_pn:name="main.lso"/>
       <outfile xil_pn:name="main.ngc"/>
@@ -134,7 +136,10 @@
     <transform xil_pn:end_ts="1678152545" xil_pn:in_ck="-5700594927419284993" xil_pn:name="TRANEXT_ngdbuild_FPGA" xil_pn:prop_ck="8316452745922214505" xil_pn:start_ts="1678152536">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
+      <status xil_pn:value="OutOfDateForInputs"/>
+      <status xil_pn:value="OutOfDateForPredecessor"/>
       <status xil_pn:value="OutOfDateForOutputs"/>
+      <status xil_pn:value="InputChanged"/>
       <status xil_pn:value="OutputChanged"/>
       <outfile xil_pn:name="_ngo"/>
       <outfile xil_pn:name="_xmsgs/ngdbuild.xmsgs"/>
@@ -146,6 +151,7 @@
       <status xil_pn:value="FailedRun"/>
       <status xil_pn:value="WarningsGenerated"/>
       <status xil_pn:value="ReadyToRun"/>
+      <status xil_pn:value="OutOfDateForPredecessor"/>
       <outfile xil_pn:name="_xmsgs/map.xmsgs"/>
       <outfile xil_pn:name="main_map.map"/>
       <outfile xil_pn:name="main_map.mrp"/>
