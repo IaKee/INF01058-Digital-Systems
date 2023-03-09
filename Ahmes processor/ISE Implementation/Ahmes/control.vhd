@@ -68,7 +68,20 @@ architecture Behavioral of control is
 	signal oROR: std_logic;
 	signal oROL: std_logic;
 	signal oHLT: std_logic;
-	
+
+	-- ALU operation constants
+	constant ALUNOP: std_logic_vector(3 downto 0):= "0000";
+	constant ALUADD: std_logic_vector(3 downto 0):= "0001";
+	constant ALUOR: std_logic_vector(3 downto 0):= "0010";
+	constant ALUAND: std_logic_vector(3 downto 0):= "0011";
+	constant ALUNOT: std_logic_vector(3 downto 0):= "0100";
+	constant ALUSUB: std_logic_vector(3 downto 0):= "0101";
+	constant ALUSHR: std_logic_vector(3 downto 0):= "0110";
+	constant ALUSHL: std_logic_vector(3 downto 0):= "0111";
+	constant ALUROR: std_logic_vector(3 downto 0):= "1000";
+	constant ALUROL: std_logic_vector(3 downto 0):= "1001";
+	constant ALUY: std_logic_vector(3 downto 0):= "1010";
+
     begin		
 		-- hw connections (slices instruction_flags to internal instruction signals)
 		oNOP	<= instruction_flags(0);
@@ -107,12 +120,39 @@ architecture Behavioral of control is
 
 		FSM: process(
 			current_state,
+
+			-- value flags
 			reg_N, 
 			reg_Z, 
 			reg_V, 
 			reg_C, 
 			reg_B,
-			instruction_flags)
+
+			-- instruction flags
+			oNOP,
+			oSTA,
+			oLDA,
+			oADD,
+			oOR,
+			oAND,
+			oNOT,
+			oSUB,
+			oJMP,
+			oJN,
+			oJP,
+			oJV,
+			oJNV,
+			oJZ,
+			oJNZ,
+			oJC,
+			oJNC,
+			oJB,
+			oJNB,
+			oSHR,
+			oSHL,
+			oROR,
+			oROL,
+			oHLT)
 			-- FSM description
 			begin
 				-- resets signals
@@ -129,7 +169,7 @@ architecture Behavioral of control is
 				load_B <= '0';
 				sel_MUX_MAR <= "0";
 				sel_MUX_MDR <= "0";
-				sel_ALU <= "0000";
+				sel_ALU <= ALUNOP;  -- default ALU operation
 				mem_write <= "0";
 				mem_read <= "0";
 				case current_state is
@@ -149,180 +189,282 @@ architecture Behavioral of control is
 					when S2 =>
 						-- updates instruction value (reg_I)
 						load_I <= '1';
-						--load_RDM_op <= '1';
-						--inc_PC_op <= '1';
 						next_state <= S3;
 					when S3 =>
-						inc_PC_op <= '0';
-						load_RDM_op <= '0';
 						if(oNOP = '1') then
+							-- goto S0
 							next_state <= S0;
 						elsif(oNOT = '1') then
-							sel_ULA_op <= "0011";
+							-- updates ALU operation
+							sel_ALU <= ALUNOT;
+
+							-- updates AC value
 							load_AC <= '1';
+
+							-- updates flag signals
 							load_N <= '1';
 							load_Z <= '1';
 							load_V <= '1';
 							load_C <= '1';
 							load_B <= '1';
+
+							-- goto S0
 							next_state <= S0;
-						elsif(oNOT = '1' and reg_N = '0') then -- JN quando n=0
-							inc_PC_op <= '1';
+						elsif(oJN = '1' and reg_N = '0') then -- JN if n=0
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;
-						elsif(oJP = '1' and reg_N = '1') then -- JP quando n=1
-							inc_PC_op <= '1';
+						elsif(oJP = '1' and reg_N = '1') then -- JP if n=1
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;
-						elsif(oJV = '1' and reg_V = '0') then -- JV quando v=0
-							inc_PC_op <= '1';
+						elsif(oJV = '1' and reg_V = '0') then -- JV if v=0
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;
-						elsif(oJNV = '1' and reg_V = '1') then -- JNV quando v=1
-							inc_PC_op <= '1';
+						elsif(oJNV = '1' and reg_V = '1') then -- JNV if v=1
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;	
-						elsif(oJZ = '1' and reg_Z = '0') then -- JZ quando z=0
-							inc_PC_op <= '1';
+						elsif(oJZ = '1' and reg_Z = '0') then -- JZ if z=0
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;
-						elsif(oJNZ = '1' and reg_Z = '1') then -- JNZ quando z=1
-							inc_PC_op <= '1';
+						elsif(oJNZ = '1' and reg_Z = '1') then -- JNZ if z=1
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;
-						elsif(oJC = '1' and reg_C = '0') then -- JC quando c=0
-							inc_PC_op <= '1';
+						elsif(oJC = '1' and reg_C = '0') then -- JC if c=0
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;
-						elsif(oJNC = '1' and reg_C = '1') then -- JNC quando c=1
-							inc_PC_op <= '1';
+						elsif(oJNC = '1' and reg_C = '1') then -- JNC if c=1
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;
-						elsif(oJB = '1' and reg_B = '0') then -- JB quando b=0
-							inc_PC_op <= '1';
+						elsif(oJB = '1' and reg_B = '0') then -- JB if b=0
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;
-						elsif(oJNB = '1' and reg_B = '1') then -- JNB quando b=1
-							inc_PC_op <= '1';
+						elsif(oJNB = '1' and reg_B = '1') then -- JNB if b=1
+							-- conditions does not match for jumping to given addres
+							-- goes to the next instruction, going to S0
+							inc_PC <= '1';
 							next_state <= S0;
 						elsif(oSHR = '1') then  -- SHR
-							sel_ULA_op <= "0101";
+							-- updates ALU instruction
+							sel_ALU <= ALUSHR;
+
+							-- updates accumulator value
 							load_AC <= '1';
+
+							-- updates logic flag signals
 							load_N <= '1';
 							load_Z <= '1';
 							load_V <= '1';
 							load_C <= '1';
 							load_B <= '1';
+
+							-- goes to S0
 							next_state <= S0;
 						elsif(oSHL = '1') then  -- SHL
-							sel_ULA_op <= "0101";
+							-- updates ALU instruction
+							sel_ALU <= ALUSHL;
+
+							-- updates accumulator value
 							load_AC <= '1';
+
+							-- updates logic flag signals
 							load_N <= '1';
 							load_Z <= '1';
 							load_V <= '1';
 							load_C <= '1';
 							load_B <= '1';
+
+							-- goes to S0
 							next_state <= S0;
 						elsif(oROR = '1') then  -- ROR
-							sel_ULA_op <= "0101";
+							-- updates ALU instruction
+							sel_ALU <= ALUROR;
+
+							-- updates accumulator value
 							load_AC <= '1';
+
+							-- updates logic flag signals
 							load_N <= '1';
 							load_Z <= '1';
 							load_V <= '1';
 							load_C <= '1';
 							load_B <= '1';
+
+							-- goes to S0
 							next_state <= S0;
 						elsif(oROL = '1') then  -- ROL
-							sel_ULA_op <= "0101";
+							-- updates ALU instruction
+							sel_ALU <= ALUROL;
+
+							-- updates accumulator value
 							load_AC <= '1';
+
+							-- updates logic flag signals
 							load_N <= '1';
 							load_Z <= '1';
 							load_V <= '1';
 							load_C <= '1';
 							load_B <= '1';
+
+							-- goes to S0
 							next_state <= S0;
 						elsif(oHLT = '1') then -- HLT
-							inc_PC_op <= '0';
+							-- goto S8 (loop state)
 							next_state <= S8;
-						else  -- qualquer outra operacao
-							sel_MUXREM <= "0";
-							load_REM <= '1';
+						else
+							-- for any sucessful jumping instruction
+							-- sets memory cursor position to current reg_PC value
+							sel_MUX_MAR <= "0" -- reg_MA <= reg_PC
+							load_MA <= '1';  -- updates reg_MA with reg_PC
+
+							-- goes to S4
 							next_state <= S4;
 						end if;
 					when S4 =>
-						sel_MUXREM <= "0";
-						inc_PC_op <= '0';
-						load_AC <= '0';
-						load_REM <= '0';
-						load_AC <= '0';
-						load_N <= '0';
-						load_Z <= '0';
-						load_V <= '0';
-						load_C <= '0';
-						load_B <= '0';
-						if(DECOD_RI(1) = '1' or
-							DECOD_RI(2) = '1' or
-							DECOD_RI(3) = '1' or
-							DECOD_RI(4) = '1' or
-							DECOD_RI(5) = '1' or
-							DECOD_RI(7) = '1' or
-							DECOD_RI(8) = '1' or
-							DECOD_RI(9) = '1' or
-							DECOD_RI(10) = '1' or
-							DECOD_RI(11) = '1' or
-							DECOD_RI(12) = '1' or
-							DECOD_RI(13) = '1' or
-							DECOD_RI(14) = '1' or
-							DECOD_RI(15) = '1' or
-							DECOD_RI(16) = '1' or
-							DECOD_RI(17) = '1' or
-							DECOD_RI(18) = '1') then
-								inc_PC_op <= '1';
+						-- enables memory read signal
+						mem_read <= '1';
+						load_MD <= '1'; -- updates memory data register
+						
+						-- increments reg_PC for any of the following instructions
+						if(oSTA = '1' or oLDA = '1' or oADD = '1' or oOR = '1' or oAND = '1' or oSUB = '1') then
+							inc_PC <= '1';
 						end if;
+
+						-- goes to S5
 						next_state <= S5;
 					when S5 =>
-						inc_PC_op <= '0';
-						if(DECOD_RI(1) = '1' or
-						DECOD_RI(2) = '1' or
-						DECOD_RI(3) = '1' or
-						DECOD_RI(4) = '1' or
-						DECOD_RI(5) = '1' or
-						DECOD_RI(7) = '1' or
-						DECOD_RI(8) = '1' or
-						DECOD_RI(9) = '1' or
-						DECOD_RI(10) = '1' or
-						DECOD_RI(11) = '1' or
-						DECOD_RI(12) = '1' or
-						DECOD_RI(13) = '1' or
-						DECOD_RI(14) = '1' or
-						DECOD_RI(15) = '1' or
-						DECOD_RI(16) = '1' or
-						DECOD_RI(17) = '1' or
-						DECOD_RI(18) = '1') then
-							sel_MUXREM <= "1";
-							load_REM <= '1';
+						if(oSTA = '1' or oLDA = '1' or oADD = '1' or oOR = '1' or oAND = '1' or oSUB = '1') then
+							-- reg_MA recieves data from reg_MD
+							sel_MUX_MA <= "1";
+							load_MA <= '1';
+							
+							-- goto S6
 							next_state <= S6;
-						else
+						else  -- for any other instruction (jumps)
+							-- updates program counter
 							load_PC <= '1';
+
+							-- goto S0
 							next_state <= S0;
 						end if;
-					when S6 =>  -- rever esse aqui
-						inc_PC_op <= '0';
-						sel_MUXREM <= "0";
-						load_REM <= '0';
-						load_PC <= '0';
-						next_state <= S7;
-						if(DECOD_RI(1) = '1') then  -- STA
-							load_RDM_op <= '1';
+					when S6 =>
+						if(oSTA = '1') then  -- STA
+							load_MD <= '1';
+						else -- for any other instruction
+							-- memory read enable pin
+							mem_read <= '1';
+
+							-- updates reg_MD value
+							load_MD <= '1';
 						end if;
+
+						-- goto s7
+						next_state <= S7;
 					when S7 =>
-						if(DECOD_RI(1) = '1') then
+						if(oSTA = '1') then
 							mem_write <= "1";
-						elsif(DECOD_RI(2) = '1') then
-							sel_ULA_op <= "0100";  -- NOP(ULA Y)
-						elsif(DECOD_RI(3) = '1') then
-							sel_ULA_op <= "0000";
-						elsif(DECOD_RI(4) = '1') then
-							sel_ULA_op <= "0001";
-						elsif(DECOD_RI(5) = '1') then
-							sel_ULA_op <= "0010";
-						elsif(DECOD_RI(6) = '1') then
-							sel_ULA_op <= "0011";
-						elsif(DECOD_RI(7) = '1') then
-							sel_ULA_op <= "0100";
+
+							-- goto S0
+							next_state <= S0;
+						elsif(oLDA = '1') then
+							-- updates ALU instruction
+							sel_ALU <= ALUY;
+							
+							-- updates ULA_out and by consequence the accumulator with reg_MD
+							load_AC <= '1';
+
+							-- updates value flag registers
+							load_N <= '1'; 
+							load_Z <= '1'; 
+							load_V <= '1'; 
+							load_C <= '1'; 
+							load_B <= '1';
+
+							-- goto S0
+							next_state <= S0;
+						elsif(oADD = '1') then
+							-- updates ALU instruction
+							sel_ALU <= ULAADD;
+
+							-- updates the accumulator with ULA_out
+							load_AC <= '1';
+
+							-- updates value flag registers
+							load_N <= '1'; 
+							load_Z <= '1'; 
+							load_V <= '1'; 
+							load_C <= '1'; 
+							load_B <= '1';
+
+							-- goto S0
+							next_state <= S0;
+						elsif(oOR = '1') then
+							-- updates ALU instruction
+							sel_ALU <= ALUOR;
+
+							-- updates the accumulator with ULA_out
+							load_AC <= '1';
+
+							-- updates value flag registers
+							load_N <= '1'; 
+							load_Z <= '1'; 
+							load_V <= '1'; 
+							load_C <= '1'; 
+							load_B <= '1';
+							
+							-- goto S0
+							next_state <= S0;
+						elsif(oAND = '1') then
+							-- updates ALU instruction
+							sel_ALU <= ALUAND;
+
+							-- updates the accumulator with ULA_out
+							load_AC <= '1';
+
+							-- updates value flag registers
+							load_N <= '1'; 
+							load_Z <= '1'; 
+							load_V <= '1'; 
+							load_C <= '1'; 
+							load_B <= '1';
+
+							-- goto S0
+							next_state <= S0;
+						elsif(oSUB = '1') then
+							-- updates ALU instruction
+							sel_ULA <= ALUSUB;
+
+							-- updates the accumulator with ULA_out
+							load_AC <= '1';
+							
+							-- updates value flag registers
+							load_N <= '1'; 
+							load_Z <= '1'; 
+							load_V <= '1'; 
+							load_C <= '1'; 
+							load_B <= '1';
+
+							-- goto S0
+							next_state <= S0;
 						end if;
 					when S8 =>
+						-- loop state (HALT)
 						next_state <= S8;
 					when others =>
 						next_state <= S0;

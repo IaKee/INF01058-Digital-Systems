@@ -218,7 +218,7 @@ architecture Behavioral of datapath is
                 end if;
             end process;
 
-        MA_MUX: process(sel_MUX_MAR, reg_PC, reg_MD)  -- MA 2x1 multiplexer
+        MAR_MUX: process(sel_MUX_MAR, reg_PC, reg_MD)  -- MAR 2x1 multiplexer
             -- 2x1 MUX, selecting between reg_PC and reg_MD
             begin
                 if(sel_MUX_MAR = "0") then
@@ -228,7 +228,7 @@ architecture Behavioral of datapath is
                 end if;
             end process;
 
-        MD_MUX: process(sel_MUX_MDR, MEM_out, reg_AC)  -- MD 2x1 multiplexer
+        MDR_MUX: process(sel_MUX_MDR, MEM_out, reg_AC)  -- MDR 2x1 multiplexer
             -- 2x1 MUX, selecting between MEM_out and reg_AC
             begin
                 if(sel_MUX_MDR = "0") then
@@ -264,7 +264,7 @@ architecture Behavioral of datapath is
                 end if;
 
                 case sel_ALU is
-                    when "0000" =>  -- ADD
+                    when "0001" =>  -- ADD
                         ALU_op <= std_logic_vector(unsigned('0' & ALU_X) + unsigned('0' & ALU_Y));
                         -- checks for overflow
                         if (ALU_X(7) = '0' and ALU_Y(7) = '0' and ALU_op(7) = '1') then
@@ -272,13 +272,13 @@ architecture Behavioral of datapath is
                         else
                             flag_V <= '0';
                         end if;
-                    when "0001" =>  -- OR
+                    when "0010" =>  -- OR
                         ALU_op <= std_logic_vector(('0' & ALU_X) or ('0' & ALU_Y));
-                    when "0010" =>  -- AND
+                    when "0011" =>  -- AND
                         ALU_op <= std_logic_vector(('0' & ALU_X) and ('0' & ALU_Y));
-                    when "0011" =>  -- NOT
+                    when "0100" =>  -- NOT
                         ALU_op <= std_logic_vector(not('0' & ALU_X));
-                    when "0100" =>  -- SUB
+                    when "0101" =>  -- SUB
                         ALU_op <= std_logic_vector(unsigned('0' & ALU_X) - unsigned('0' & ALU_Y));
                         -- borrow flag
                         flag_B <= ALU_op(7) and ALU_op(8);
@@ -288,7 +288,7 @@ architecture Behavioral of datapath is
                         else
                             flag_V <= '0';
                         end if;
-                    when "0101" => -- SHR
+                    when "0110" => -- SHR
                         ALU_op(8) <= ALU_X(0);  -- ALU_op, and by consequence carry recieves reg_AC lsb
                         ALU_op(7) <= '0'; -- ULA_out msb recieves 0
                         ALU_op(6) <= ALU_X(7);
@@ -298,7 +298,7 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(3);
                         ALU_op(1) <= ALU_X(2);
                         ALU_op(0) <= ALU_X(1);
-                    when "0110" => -- SHL
+                    when "0111" => -- SHL
                         ALU_op(8) <= ALU_X(7);  -- ALU_op, and by consequence carry recieves reg_AC msb
                         ALU_op(7) <= ALU_X(6); 
                         ALU_op(6) <= ALU_X(5); 
@@ -308,7 +308,7 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(1); 
                         ALU_op(1) <= ALU_X(0); 
                         ALU_op(0) <= '0'; -- ULA_out lsb recieves 0
-                    when "0111" => -- ROR
+                    when "1000" => -- ROR
                         ALU_op(8) <= ALU_X(0);
                         ALU_op(7) <= flag_C;
                         ALU_op(6) <= ALU_X(7);
@@ -318,7 +318,7 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(3);
                         ALU_op(1) <= ALU_X(2);
                         ALU_op(0) <= ALU_X(1);
-                    when "1000" => -- ROL
+                    when "1001" => -- ROL
                         ALU_op(8) <= ALU_X(7);
                         ALU_op(7) <= ALU_X(6);
                         ALU_op(6) <= ALU_X(5);
@@ -328,8 +328,10 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(1);
                         ALU_op(1) <= ALU_X(0);
                         ALU_op(0) <= flag_C;
-                    when others => -- NOP
-                        ALU_op <= '0' & ALU_Y;  
+                    when "1010" => -- ULAY
+                        ALU_op <= std_logic_vector('0' & ALU_Y);
+                    when others => -- NOP (ULAX - reg_AC)
+                        ALU_op <= '0' & ALU_X;  
                 end case;
             end process;   
         
