@@ -29,6 +29,7 @@ entity datapath is
         -- memory control
         mem_read: in std_logic_vector(0 downto 0);
         mem_write: in std_logic_vector(0 downto 0);
+		mem_out: out std_logic_vector(7 downto 0);
 
         -- ALU flags
         reg_N: out std_logic;
@@ -47,10 +48,11 @@ architecture Behavioral of datapath is
     signal reg_AC: std_logic_vector (7 downto 0);
     signal reg_MA: std_logic_vector(7 downto 0);
     signal reg_MD: std_logic_vector(7 downto 0);
-    signal MA_MUX_out: std_logic_vector(7 downto 0);
-    signal MD_MUX_out: std_logic_vector(7 downto 0);
+	signal reg_I: std_logic_vector(7 downto 0);
+    signal MAR_MUX_out: std_logic_vector(7 downto 0);
+    signal MDR_MUX_out: std_logic_vector(7 downto 0);
     signal ALU_out: std_logic_vector(7 downto 0);
-    signal MEM_out: std_logic_vector(7 downto 0);
+    signal omem_out: std_logic_vector(7 downto 0);
     signal IR_DECOD_out: std_logic_vector(23 downto 0);
     
     -- AC flags (for upkeeping internal values until the register update on rising edge)
@@ -123,14 +125,15 @@ architecture Behavioral of datapath is
         ALU_Y <= reg_MD;  -- retrieves ALU Y from reg_MD (memory data)
         flag_C <= ALU_op(8);  -- carry flag
         instruction_flags <= IR_DECOD_out;
+		mem_out <= omem_out;
 
         mem_ahmes: mem
             port map(
                 clka => CLOCK,
                 wea => mem_write,
-                addra => reg_rem,
-                dina => reg_rem,
-                douta => reg_mem);
+                addra => reg_MA,
+                dina => reg_MA,
+                douta => omem_out);
 		
         PC: process(CLOCK, RESET)  -- program counter register
             -- standard register, has functions to reset, load values and increment internal value by 1
@@ -148,7 +151,7 @@ architecture Behavioral of datapath is
                 end if;
             end process;
 				
-        AC: process(CLOCK, RESET)  -- accumulator register
+        AC: process(CLOCK, RESET, load_AC)  -- accumulator register
             -- standard register, has functions to reset and load values
             -- mainly recieves values from reg_ALU
             -- asynchronous reset
@@ -161,7 +164,7 @@ architecture Behavioral of datapath is
             end process;
         
         -- ALU flag registers
-        regN: process(CLOCK, RESET)  -- negative flag register
+        regN: process(CLOCK, RESET, load_N)  -- negative flag register
             -- standard register, has functions to reset and load values
             -- mainly recieves values from internal signal flag_N
             -- asynchronous reset
@@ -173,7 +176,7 @@ architecture Behavioral of datapath is
                 end if;
             end process;
         
-        regZ: process(CLOCK, RESET)  -- zero flag register
+        regZ: process(CLOCK, RESET, load_Z)  -- zero flag register
             -- standard register, has functions to reset and load values
             -- mainly recieves values from internal signal flag_Z
             -- asynchronous reset
@@ -185,7 +188,7 @@ architecture Behavioral of datapath is
                 end if;
             end process;
 		  
-        regV: process(CLOCK, RESET) -- overflow flag register
+        regV: process(CLOCK, RESET, load_V) -- overflow flag register
             -- standard register, has functions to reset and load values
             -- mainly recieves values from internal signal flag_V
             -- asynchronous reset
@@ -197,7 +200,7 @@ architecture Behavioral of datapath is
                 end if;
             end process;
 				
-        regC: process(CLOCK, RESET)  -- carry flag register
+        regC: process(CLOCK, RESET, load_C)  -- carry flag register
             -- standard register, has functions to reset and load values
             -- mainly recieves values from internal signal flag_C
             -- asynchronous reset
@@ -209,7 +212,7 @@ architecture Behavioral of datapath is
                 end if;
             end process;
 				
-        regB: process(CLOCK, RESET)  -- borrow flag register
+        regB: process(CLOCK, RESET, load_B)  -- borrow flag register
             -- standard register, has functions to reset and load values
             -- mainly recieves values from internal signal flag_B
             -- asynchronous reset
@@ -221,31 +224,31 @@ architecture Behavioral of datapath is
                 end if;
             end process;
         		
-        IR: process (CLOCK, RESET) -- instruction register
+        IR: process (CLOCK, RESET, load_I) -- instruction register
             -- standard register, has functions to reset and load values
             -- recieves values from reg_MD
             -- asynchronous reset    
             begin
                 if(RESET = '1') then
                     reg_I <= "00000000";
-                elsif(rising_edge(CLOCK) and load_RI = '1') then
-                    reg_RI <= reg_MD;
+                elsif(rising_edge(CLOCK) and load_I = '1') then
+                    reg_I <= reg_MD;
                 end if;
             end process;    
         
-        MAR: process(CLOCK, RESET) -- memory address register
+        MAR: process(CLOCK, RESET, load_MA) -- memory address register
             -- standard register, has functions to reset and load values
             -- recieves values from MA_MUX_out
             -- asynchronous reset 
             begin
                 if (RESET = '1') then
                     reg_MA <= "00000000";
-                elsif (rising_edge(CLOCK) and load_REM = '1') then
-                    reg_MA <= MA_MUX_out;
+                elsif (rising_edge(CLOCK) and load_MA = '1') then
+                    reg_MA <= MAR_MUX_out;
                 end if;
             end process;
 
-        MDR: process(CLOCK, RESET) -- memory data register
+        MDR: process(CLOCK, RESET, load_MD) -- memory data register
             -- standard register, has functions to reset and load values
             -- recieves values from MD_MUX_out
             -- asynchronous reset 
@@ -253,7 +256,7 @@ architecture Behavioral of datapath is
                 if(RESET = '1') then
                     reg_MD <= "00000000";
                 elsif(rising_edge(CLOCK) and load_MD = '1') then
-                    reg_MD <= MD_MUX_out;
+                    reg_MD <= MDR_MUX_out;
                 end if;
             end process;
 
@@ -261,19 +264,20 @@ architecture Behavioral of datapath is
             -- 2x1 MUX, selecting between reg_PC and reg_MD
             begin
                 if(sel_MUX_MAR = "0") then
-                    MUX_MA_out <= reg_PC;
+                    MAR_MUX_out <= reg_PC;
                 else
-                    MUX_MA_out <= reg_MD;
+                    MAR_MUX_out <= reg_MD;
                 end if;
             end process;
 
-        MDR_MUX: process(sel_MUX_MDR, MEM_out, reg_AC)  -- MDR 2x1 multiplexer
+        MDR_MUX: process(sel_MUX_MDR, oMEM_out, reg_AC, mem_read)  -- MDR 2x1 multiplexer
             -- 2x1 MUX, selecting between MEM_out and reg_AC
             begin
-                if(sel_MUX_MDR = "0") then
-                    MUX_MDR_out <= MEM_out;
+				-- requires 'mem_read' signal to enable memory reading
+                if(sel_MUX_MDR = "0" and mem_read = "1") then
+                    MDR_MUX_out <= oMEM_out;
                 else
-                    MUX_MDR_out <= reg_AC;
+                    MDR_MUX_out <= reg_AC;
                 end if;
             end process;
 				
@@ -379,7 +383,7 @@ architecture Behavioral of datapath is
             -- the processor instructions
             begin
 				IR_DECOD_out <= "000000000000000000000000";
-				case reg_RI_op is
+				case reg_I is
 					when iNOP => IR_DECOD_out <= "000000000000000000000001"; -- 00 NOP
 					when iSTA => IR_DECOD_out <= "000000000000000000000010"; -- 16 STA
 					when iLDA => IR_DECOD_out <= "000000000000000000000100"; -- 32 LDA

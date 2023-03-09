@@ -42,6 +42,7 @@
     <file xil_pn:fileType="FILE_SPL" xil_pn:name="datapath.spl"/>
     <file xil_pn:fileType="FILE_XST_STX" xil_pn:name="datapath.stx"/>
     <file xil_pn:fileType="FILE_SYMBOL" xil_pn:name="datapath.sym" xil_pn:origination="imported"/>
+    <file xil_pn:fileType="FILE_VHDL_INSTTEMPLATE" xil_pn:name="datapath.vhi"/>
     <file xil_pn:fileType="FILE_XST" xil_pn:name="datapath.xst"/>
     <file xil_pn:fileType="FILE_CMD_LOG" xil_pn:name="datapath_ahmes.cmd_log"/>
     <file xil_pn:branch="Implementation" xil_pn:fileType="FILE_LSO" xil_pn:name="datapath_ahmes.lso"/>
@@ -111,14 +112,10 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1678320485" xil_pn:in_ck="-2720641302308795653" xil_pn:name="TRANEXT_xstsynthesize_virtex6" xil_pn:prop_ck="6605465705760815701" xil_pn:start_ts="1678320472">
+    <transform xil_pn:end_ts="1678391242" xil_pn:in_ck="-2720641302308795653" xil_pn:name="TRANEXT_xstsynthesize_virtex6" xil_pn:prop_ck="6605465705760815701" xil_pn:start_ts="1678391234">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="WarningsGenerated"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForInputs"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="InputChanged"/>
-      <status xil_pn:value="OutputChanged"/>
       <outfile xil_pn:name="_xmsgs/xst.xmsgs"/>
       <outfile xil_pn:name="main.lso"/>
       <outfile xil_pn:name="main.ngc"/>
@@ -139,7 +136,6 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <status xil_pn:value="OutOfDateForInputs"/>
-      <status xil_pn:value="OutOfDateForPredecessor"/>
       <status xil_pn:value="OutOfDateForOutputs"/>
       <status xil_pn:value="InputChanged"/>
       <status xil_pn:value="OutputChanged"/>

@@ -1,149 +1,152 @@
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
-
---library work;
---use work.control.control.all;
+	use IEEE.STD_LOGIC_1164.ALL;
+	use IEEE.NUMERIC_STD.ALL;
 
 entity main is
-	Port(
+	port(
 		CLOCK: in std_logic;
 		RESET: in std_logic;
 		mem_out: out std_logic_vector(7 downto 0));
 end main;
 
 architecture Behavioral of main is
-	-- registradores
-	signal DECOD_RI: std_logic_vector(23 downto 0);
-	signal reg_N: std_logic;
-	signal reg_Z: std_logic;
-	signal reg_V: std_logic;
-	signal reg_C: std_logic;
-	signal reg_B: std_logic;
-	signal inc_PC: std_logic;
-	signal load_ac: std_logic;
-	signal load_pc: std_logic;
-	signal load_REM: std_logic;
-	signal load_RDM: std_logic;
-	signal load_RI: std_logic;
-	signal load_N: std_logic;
-	signal load_Z: std_logic;
-	signal load_V: std_logic;
-	signal load_C: std_logic;
-	signal load_B: std_logic;
-	signal sel_ULA: std_logic_vector(3 downto 0);
-	signal sel_MUXREM: std_logic_vector(0 downto 0);
-	signal sel_MUXRDM: std_logic_vector(0 downto 0);
-	signal mem_write: std_logic_vector(0 downto 0);
+	-- control signals for linking datapath and control units
+	signal s_instruction_flags: std_logic_vector(23 downto 0);
+	signal s_reg_N: std_logic;
+	signal s_reg_Z: std_logic;
+	signal s_reg_V: std_logic;
+	signal s_reg_C: std_logic;
+	signal s_reg_B: std_logic;
+	signal s_inc_PC: std_logic;
+	signal s_load_AC: std_logic;
+	signal s_load_PC: std_logic;
+	signal s_load_MA: std_logic;
+	signal s_load_MD: std_logic;
+	signal s_load_I: std_logic;
+	signal s_load_N: std_logic;
+	signal s_load_Z: std_logic;
+	signal s_load_V: std_logic;
+	signal s_load_C: std_logic;
+	signal s_load_B: std_logic;
+	signal s_sel_MUX_MAR: std_logic_vector(0 downto 0);
+	signal s_sel_MUX_MDR: std_logic_vector(0 downto 0);
+	signal s_sel_ALU: std_logic_vector(3 downto 0);
+	signal s_mem_read: std_logic_vector(0 downto 0);
+	signal s_mem_write: std_logic_vector(0 downto 0);
+	signal o_mem_out: std_logic_vector(7 downto 0);
 	
-	COMPONENT control
-		PORT(
-			CLOCK : IN std_logic;
-			RESET : IN std_logic;
-			DECOD_RI : IN std_logic_vector(23 downto 0);
-			reg_N : IN std_logic;
-			reg_Z : IN std_logic;
-			reg_V : IN std_logic;
-			reg_C : IN std_logic;
-			reg_B : IN std_logic;          
-			inc_PC : OUT std_logic;
-			load_ac : OUT std_logic;
-			load_pc : OUT std_logic;
-			load_REM : OUT std_logic;
-			load_RDM : OUT std_logic;
-			load_RI : OUT std_logic;
-			load_N : OUT std_logic;
-			load_Z : OUT std_logic;
-			load_V : OUT std_logic;
-			load_C : OUT std_logic;
-			load_B : OUT std_logic;
-			sel_ULA : OUT std_logic_vector(3 downto 0);
-			sel_MUXREM : OUT std_logic_vector(0 downto 0);
-			sel_MUXRDM : OUT std_logic_vector(0 downto 0);
-			mem_write : OUT std_logic_vector(0 to 0)
-			);
-		END COMPONENT;
+	component control
+	port(
+		CLOCK: in std_logic;
+		RESET: in std_logic;
+		instruction_flags: in std_logic_vector(23 downto 0);
+		reg_N: in std_logic;
+		reg_Z: in std_logic;
+		reg_V: in std_logic;
+		reg_C: in std_logic;
+		reg_B: in std_logic;          
+		inc_PC: out std_logic;
+		load_AC: out std_logic;
+		load_PC: out std_logic;
+		load_MA: out std_logic;
+		load_MD: out std_logic;
+		load_I: out std_logic;
+		load_N: out std_logic;
+		load_Z: out std_logic;
+		load_V: out std_logic;
+		load_C: out std_logic;
+		load_B: out std_logic;
+		sel_MUX_MAR: out std_logic_vector(0 to 0);
+		sel_MUX_MDR: out std_logic_vector(0 to 0);
+		sel_ALU: out std_logic_vector(3 downto 0);
+		mem_read: out std_logic_vector(0 to 0);
+		mem_write: out std_logic_vector(0 to 0));
+		end component;
 	
-	COMPONENT datapath
-		PORT(
-			CLOCK : IN std_logic;
-			RESET : IN std_logic;
-			inc_PC : IN std_logic;
-			load_PC : IN std_logic;
-			load_AC : IN std_logic;
-			load_REM : IN std_logic;
-			load_RDM : IN std_logic;
-			load_RI : IN std_logic;
-			load_N : IN std_logic;
-			load_Z : IN std_logic;
-			load_V : IN std_logic;
-			load_C : IN std_logic;
-			load_B : IN std_logic;
-			sel_MUXREM : IN std_logic_vector(0 downto 0);
-			sel_MUXRDM : IN std_logic_vector(0 downto 0);
-			sel_ULA : IN std_logic_vector(3 downto 0);
-			mem_write : IN std_logic_vector(0 to 0);          
-			reg_N : OUT std_logic;
-			reg_Z : OUT std_logic;
-			reg_V : OUT std_logic;
-			reg_C : OUT std_logic;
-			reg_B : OUT std_logic;
-			DECOD_RI : OUT std_logic_vector(23 downto 0));
-		END COMPONENT;
+	component datapath
+		port(
+			CLOCK: in std_logic;
+			RESET: in std_logic;
+			inc_PC: in std_logic;
+			load_PC: in std_logic;
+			load_AC: in std_logic;
+			load_MA: in std_logic;
+			load_MD: in std_logic;
+			load_I: in std_logic;
+			load_N: in std_logic;
+			load_Z: in std_logic;
+			load_V: in std_logic;
+			load_C: in std_logic;
+			load_B: in std_logic;
+			sel_MUX_MAR: in std_logic_vector(0 to 0);
+			sel_MUX_MDR: in std_logic_vector(0 to 0);
+			sel_ALU: in std_logic_vector(3 downto 0);
+			mem_read: in std_logic_vector(0 to 0);
+			mem_write: in std_logic_vector(0 to 0);          
+			mem_out: out std_logic_vector(7 downto 0);
+			reg_N: out std_logic;
+			reg_Z: out std_logic;
+			reg_V: out std_logic;
+			reg_C: out std_logic;
+			reg_B: out std_logic;
+			instruction_flags: out std_logic_vector(23 downto 0));
+		end component;
 	
-	
-begin
-	-- instancia��o da parte de controle
-	PC: control PORT MAP(
-		CLOCK => CLOCK,
-		RESET => RESET,
-		DECOD_RI => DECOD_RI,
-		reg_N => reg_N,
-		reg_Z => reg_Z,
-		reg_V => reg_V,
-		reg_C => reg_C,
-		reg_B => reg_B,
-		inc_PC => inc_PC,
-		load_ac => load_ac,
-		load_pc => load_pc,
-		load_REM => load_REM,
-		load_RDM => load_RDM,
-		load_RI => load_RI,
-		load_N => load_N,
-		load_Z => load_Z,
-		load_V => load_V,
-		load_C => load_C,
-		load_B => load_B,
-		sel_ULA => sel_ULA,
-		sel_MUXREM => sel_MUXREM,
-		sel_MUXRDM => sel_MUXRDM,
-		mem_write => mem_write);
-	
-	-- instancia��o da parte operativa
-	PO: datapath PORT MAP(
-		CLOCK => CLOCK,
-		RESET => RESET,
-		inc_PC => inc_PC,
-		load_PC => load_PC,
-		load_AC => load_AC,
-		load_REM => load_REM,
-		load_RDM => load_REM,
-		load_RI => load_REM,
-		load_N => load_N,
-		load_Z => load_Z,
-		load_V => load_V,
-		load_C => load_C,
-		load_B => load_B,
-		sel_MUXREM => sel_MUXREM,
-		sel_MUXRDM => sel_MUXRDM,
-		sel_ULA => sel_ULA,
-		mem_write => mem_write,
-		reg_N => reg_N,
-		reg_Z => reg_Z,
-		reg_V => reg_V,
-		reg_C => reg_C,
-		reg_B => reg_B,
-		DECOD_RI => DECOD_RI);
+	begin
+		-- hw connections
+		mem_out <= o_mem_out;
 		
-end Behavioral;
+		CTRL: control PORT MAP(
+			CLOCK => CLOCK,
+			RESET => RESET,
+			instruction_flags => s_instruction_flags,
+			reg_N => s_reg_N,
+			reg_Z => s_reg_Z,
+			reg_V => s_reg_V,
+			reg_C => s_reg_C,
+			reg_B => s_reg_B,
+			inc_PC => s_inc_PC,
+			load_AC => s_load_AC,
+			load_PC => s_load_PC,
+			load_MA => s_load_MA,
+			load_MD => s_load_MD,
+			load_I => s_load_I,
+			load_N => s_load_N,
+			load_Z => s_load_Z,
+			load_V => s_load_V,
+			load_C => s_load_C,
+			load_B => s_load_B,
+			sel_MUX_MAR => s_sel_MUX_MAR,
+			sel_MUX_MDR => s_sel_MUX_MDR,
+			sel_ALU => s_sel_ALU,
+			mem_read => s_mem_read,
+			mem_write => s_mem_write);
+		
+		DP: datapath PORT MAP(
+			CLOCK => CLOCK,
+			RESET => RESET,
+			inc_PC => s_inc_PC,
+			load_PC => s_load_PC,
+			load_AC => s_load_AC,
+			load_MA => s_load_MA,
+			load_MD => s_load_MD,
+			load_I => s_load_I,
+			load_N => s_load_N,
+			load_Z => s_load_Z,
+			load_V => s_load_V,
+			load_C => s_load_C,
+			load_B => s_load_B,
+			sel_MUX_MAR => s_sel_MUX_MAR,
+			sel_MUX_MDR => s_sel_MUX_MDR,
+			sel_ALU => s_sel_ALU,
+			mem_read => s_mem_read,
+			mem_write => s_mem_write,
+			mem_out => o_mem_out,
+			reg_N => s_reg_N,
+			reg_Z => s_reg_Z,
+			reg_V => s_reg_V,
+			reg_C => s_reg_C,
+			reg_B => s_reg_B,
+			instruction_flags => s_instruction_flags);
+	end Behavioral;
 

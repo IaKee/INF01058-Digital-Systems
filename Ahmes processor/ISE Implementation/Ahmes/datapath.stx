@@ -45,28 +45,16 @@ Parsing architecture <mem_a> of entity <mem>.
 Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" into library work
 Parsing entity <datapath>.
 Parsing architecture <Behavioral> of entity <datapath>.
-ERROR:HDLCompiler:288 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 86: Cannot read from 'out' object instruction_flags ; use 'buffer' or 'inout'
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 92: <reg_rem> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 93: <reg_rem> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 94: <reg_mem> is not declared.
-ERROR:HDLCompiler:192 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 94: Actual of formal out port douta cannot be an expression
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 191: <reg_i> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 193: <reg_ri> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 192: <load_ri> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 204: <load_rem> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 225: <mux_ma_out> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 227: <mux_ma_out> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 235: <mux_mdr_out> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 237: <mux_mdr_out> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 343: <reg_ri_op> is not declared.
-ERROR:HDLCompiler:69 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 338: <reg_i> is not declared.
-ERROR:HDLCompiler:854 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" Line 44: Unit <behavioral> ignored due to previous errors.
-VHDL file D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd ignored due to errors
+
+
+Total REAL time to Xst completion: 3.00 secs
+Total CPU time to Xst completion: 3.64 secs
+ 
 --> 
 
-Total memory usage is 4474688 kilobytes
+Total memory usage is 4474816 kilobytes
 
-Number of errors   :   16 (   0 filtered)
+Number of errors   :    0 (   0 filtered)
 Number of warnings :    0 (   0 filtered)
 Number of infos    :    0 (   0 filtered)
 

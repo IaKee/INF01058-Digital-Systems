@@ -52,7 +52,6 @@ architecture Behavioral of control is
 	signal oAND: std_logic;
 	signal oNOT: std_logic;
 	signal oSUB: std_logic;
-	signal oJMP: std_logic;
 	signal oJN: std_logic;
 	signal oJP: std_logic;
 	signal oJV: std_logic;
@@ -92,7 +91,6 @@ architecture Behavioral of control is
 		oAND	<= instruction_flags(5);
 		oNOT	<= instruction_flags(6);
 		oSUB	<= instruction_flags(7);
-		oJMP	<= instruction_flags(8);
 		oJN		<= instruction_flags(9);
 		oJP		<= instruction_flags(10);
 		oJV		<= instruction_flags(11);
@@ -137,7 +135,6 @@ architecture Behavioral of control is
 			oAND,
 			oNOT,
 			oSUB,
-			oJMP,
 			oJN,
 			oJP,
 			oJV,
@@ -177,13 +174,13 @@ architecture Behavioral of control is
 						-- used by all instructions
 						-- sets MA to recieve data from reg_PC
 						-- updates MA value
-						sel_MUX_MAR <= '0';  
+						sel_MUX_MAR <= "0";  
 						load_MA <= '1';
 						next_state <= S1;
 					when S1 =>
 						-- reads from memory
 						-- increments reg_PC
-						mem_read <= '1';
+						mem_read <= "1";
 						inc_PC <= '1';
 						next_state <= S2;
 					when S2 =>
@@ -338,7 +335,7 @@ architecture Behavioral of control is
 						end if;
 					when S4 =>
 						-- enables memory read signal
-						mem_read <= '1';
+						mem_read <= "1";
 						load_MD <= '1'; -- updates memory data register
 						
 						-- increments reg_PC for any of the following instructions
@@ -351,7 +348,7 @@ architecture Behavioral of control is
 					when S5 =>
 						if(oSTA = '1' or oLDA = '1' or oADD = '1' or oOR = '1' or oAND = '1' or oSUB = '1') then
 							-- reg_MA recieves data from reg_MD
-							sel_MUX_MA <= "1";
+							sel_MUX_MAR <= "1";
 							load_MA <= '1';
 							
 							-- goto S6
@@ -368,7 +365,7 @@ architecture Behavioral of control is
 							load_MD <= '1';
 						else -- for any other instruction
 							-- memory read enable pin
-							mem_read <= '1';
+							mem_read <= "1";
 
 							-- updates reg_MD value
 							load_MD <= '1';
@@ -400,7 +397,7 @@ architecture Behavioral of control is
 							next_state <= S0;
 						elsif(oADD = '1') then
 							-- updates ALU instruction
-							sel_ALU <= ULAADD;
+							sel_ALU <= ALUADD;
 
 							-- updates the accumulator with ULA_out
 							load_AC <= '1';
@@ -448,7 +445,7 @@ architecture Behavioral of control is
 							next_state <= S0;
 						elsif(oSUB = '1') then
 							-- updates ALU instruction
-							sel_ULA <= ALUSUB;
+							sel_ALU <= ALUSUB;
 
 							-- updates the accumulator with ULA_out
 							load_AC <= '1';
