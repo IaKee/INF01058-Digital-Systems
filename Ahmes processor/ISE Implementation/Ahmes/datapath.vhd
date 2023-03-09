@@ -66,6 +66,45 @@ architecture Behavioral of datapath is
 	signal ALU_op: std_logic_vector(8 downto 0); -- ALU operational signal
     -- the extra bit is used for the overflow(V) flag
 
+    -- ALU operation constants
+	constant ALUNOP: std_logic_vector(3 downto 0):= "0000";
+	constant ALUADD: std_logic_vector(3 downto 0):= "0001";
+	constant ALUOR:  std_logic_vector(3 downto 0):= "0010";
+	constant ALUAND: std_logic_vector(3 downto 0):= "0011";
+	constant ALUNOT: std_logic_vector(3 downto 0):= "0100";
+	constant ALUSUB: std_logic_vector(3 downto 0):= "0101";
+	constant ALUSHR: std_logic_vector(3 downto 0):= "0110";
+	constant ALUSHL: std_logic_vector(3 downto 0):= "0111";
+	constant ALUROR: std_logic_vector(3 downto 0):= "1000";
+	constant ALUROL: std_logic_vector(3 downto 0):= "1001";
+	constant ALUY:   std_logic_vector(3 downto 0):= "1010";
+
+    -- intruction number constants to be used with instruction_flags slices
+	constant iNOP: std_logic_vector(7 downto 0):= "00000000";
+	constant iSTA: std_logic_vector(7 downto 0):= "00010000";
+	constant iLDA: std_logic_vector(7 downto 0):= "00100000";
+	constant iADD: std_logic_vector(7 downto 0):= "00110000";
+	constant iOR:  std_logic_vector(7 downto 0):= "01000000";
+	constant iAND: std_logic_vector(7 downto 0):= "01010000";
+	constant iNOT: std_logic_vector(7 downto 0):= "01100000";
+	constant iSUB: std_logic_vector(7 downto 0):= "01110000";
+	constant iJMP: std_logic_vector(7 downto 0):= "10000000";
+	constant iJN:  std_logic_vector(7 downto 0):= "10010000";
+	constant iJP:  std_logic_vector(7 downto 0):= "10010100";
+	constant iJV:  std_logic_vector(7 downto 0):= "10011000";
+	constant iJNV: std_logic_vector(7 downto 0):= "10011100";
+	constant iJZ:  std_logic_vector(7 downto 0):= "10100000";
+	constant iJNZ: std_logic_vector(7 downto 0):= "10100100";
+	constant iJC:  std_logic_vector(7 downto 0):= "10110000";
+	constant iJNC: std_logic_vector(7 downto 0):= "10110100";
+	constant iJB:  std_logic_vector(7 downto 0):= "10111000";
+	constant iJNB: std_logic_vector(7 downto 0):= "10111100";
+	constant iSHR: std_logic_vector(7 downto 0):= "11100000";
+	constant iSHL: std_logic_vector(7 downto 0):= "11100001";
+	constant iROR: std_logic_vector(7 downto 0):= "11100010";
+	constant iROL: std_logic_vector(7 downto 0):= "11100011";
+	constant iHLT: std_logic_vector(7 downto 0):= "11110000";
+
     -- BRAM memory component (mem_ahmes)
     component mem
 	    port(
@@ -79,11 +118,11 @@ architecture Behavioral of datapath is
     begin  -- datapath behavioral start
         
         -- hw connections (not clock dependent)
-        reg_ALU <= std_logic_vector(ALU_op(7 downto 0));  -- updates ALU output with 7 lsb of ALU_op
+        ALU_out <= std_logic_vector(ALU_op(7 downto 0));  -- updates ALU output with 7 lsb of ALU_op
         ALU_X <= reg_AC;  -- retrieves ALU X from reg_AC (accumulator)
         ALU_Y <= reg_MD;  -- retrieves ALU Y from reg_MD (memory data)
         flag_C <= ALU_op(8);  -- carry flag
-        IR_DECOD_out <= instruction_flags;
+        instruction_flags <= IR_DECOD_out;
 
         mem_ahmes: mem
             port map(
@@ -264,7 +303,7 @@ architecture Behavioral of datapath is
                 end if;
 
                 case sel_ALU is
-                    when "0001" =>  -- ADD
+                    when ALUADD =>  -- ADD
                         ALU_op <= std_logic_vector(unsigned('0' & ALU_X) + unsigned('0' & ALU_Y));
                         -- checks for overflow
                         if (ALU_X(7) = '0' and ALU_Y(7) = '0' and ALU_op(7) = '1') then
@@ -272,13 +311,13 @@ architecture Behavioral of datapath is
                         else
                             flag_V <= '0';
                         end if;
-                    when "0010" =>  -- OR
+                    when ALUOR =>  -- OR
                         ALU_op <= std_logic_vector(('0' & ALU_X) or ('0' & ALU_Y));
-                    when "0011" =>  -- AND
+                    when ALUAND =>  -- AND
                         ALU_op <= std_logic_vector(('0' & ALU_X) and ('0' & ALU_Y));
-                    when "0100" =>  -- NOT
+                    when ALUNOT =>  -- NOT
                         ALU_op <= std_logic_vector(not('0' & ALU_X));
-                    when "0101" =>  -- SUB
+                    when ALUSUB =>  -- SUB
                         ALU_op <= std_logic_vector(unsigned('0' & ALU_X) - unsigned('0' & ALU_Y));
                         -- borrow flag
                         flag_B <= ALU_op(7) and ALU_op(8);
@@ -288,7 +327,7 @@ architecture Behavioral of datapath is
                         else
                             flag_V <= '0';
                         end if;
-                    when "0110" => -- SHR
+                    when ALUSHR => -- SHR
                         ALU_op(8) <= ALU_X(0);  -- ALU_op, and by consequence carry recieves reg_AC lsb
                         ALU_op(7) <= '0'; -- ULA_out msb recieves 0
                         ALU_op(6) <= ALU_X(7);
@@ -298,7 +337,7 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(3);
                         ALU_op(1) <= ALU_X(2);
                         ALU_op(0) <= ALU_X(1);
-                    when "0111" => -- SHL
+                    when ALUSHL => -- SHL
                         ALU_op(8) <= ALU_X(7);  -- ALU_op, and by consequence carry recieves reg_AC msb
                         ALU_op(7) <= ALU_X(6); 
                         ALU_op(6) <= ALU_X(5); 
@@ -308,7 +347,7 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(1); 
                         ALU_op(1) <= ALU_X(0); 
                         ALU_op(0) <= '0'; -- ULA_out lsb recieves 0
-                    when "1000" => -- ROR
+                    when ALUROR => -- ROR
                         ALU_op(8) <= ALU_X(0);
                         ALU_op(7) <= flag_C;
                         ALU_op(6) <= ALU_X(7);
@@ -318,7 +357,7 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(3);
                         ALU_op(1) <= ALU_X(2);
                         ALU_op(0) <= ALU_X(1);
-                    when "1001" => -- ROL
+                    when ALUROL => -- ROL
                         ALU_op(8) <= ALU_X(7);
                         ALU_op(7) <= ALU_X(6);
                         ALU_op(6) <= ALU_X(5);
@@ -328,7 +367,7 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(1);
                         ALU_op(1) <= ALU_X(0);
                         ALU_op(0) <= flag_C;
-                    when "1010" => -- ULAY
+                    when ALUY => -- ULAY
                         ALU_op <= std_logic_vector('0' & ALU_Y);
                     when others => -- NOP (ULAX - reg_AC)
                         ALU_op <= '0' & ALU_X;  
@@ -341,31 +380,31 @@ architecture Behavioral of datapath is
             begin
 				IR_DECOD_out <= "000000000000000000000000";
 				case reg_RI_op is
-					when "00000000" => IR_DECOD_out(0)  <= '1'; -- 00 NOP
-					when "00010000" => IR_DECOD_out(1)  <= '1'; -- 16 STA
-					when "00100000" => IR_DECOD_out(2)  <= '1'; -- 32 LDA
-					when "00110000" => IR_DECOD_out(3)  <= '1'; -- 48 ADD
-					when "01000000" => IR_DECOD_out(4)  <= '1'; -- 64 OR
-					when "01010000" => IR_DECOD_out(5)  <= '1'; -- 80 AND
-					when "01100000" => IR_DECOD_out(6)  <= '1'; -- 96 NOT
-					when "01110000" => IR_DECOD_out(7)  <= '1'; -- 112 SUB
-					when "10000000" => IR_DECOD_out(8)  <= '1'; -- 128 JMP
-					when "10010000" => IR_DECOD_out(9)  <= '1'; -- 144 JN
-					when "10010100" => IR_DECOD_out(10) <= '1'; -- 148 JP
-					when "10011000" => IR_DECOD_out(11) <= '1'; -- 152 JV
-					when "10011100" => IR_DECOD_out(12) <= '1'; -- 156 JNV
-					when "10100000" => IR_DECOD_out(13) <= '1'; -- 160 JZ
-					when "10100100" => IR_DECOD_out(14) <= '1'; -- 164 JNZ
-					when "10110000" => IR_DECOD_out(15) <= '1'; -- 176 JC
-					when "10110100" => IR_DECOD_out(16) <= '1'; -- 180 JNC
-					when "10111000" => IR_DECOD_out(17) <= '1'; -- 184 JB
-					when "10111100" => IR_DECOD_out(18) <= '1'; -- 188 JNB
-					when "11100000" => IR_DECOD_out(19) <= '1'; -- 224 SHR
-					when "11100001" => IR_DECOD_out(20) <= '1'; -- 225 SHL
-					when "11100010" => IR_DECOD_out(21) <= '1'; -- 226 ROR
-					when "11100011" => IR_DECOD_out(22) <= '1'; -- 227 ROL
-					when "11110000" => IR_DECOD_out(23) <= '1'; -- 240 HLT
-					when others => IR_DECOD_out <= "000000000000000000000000";  -- 00 NOP
+					when iNOP => IR_DECOD_out <= "000000000000000000000001"; -- 00 NOP
+					when iSTA => IR_DECOD_out <= "000000000000000000000010"; -- 16 STA
+					when iLDA => IR_DECOD_out <= "000000000000000000000100"; -- 32 LDA
+					when iADD => IR_DECOD_out <= "000000000000000000001000"; -- 48 ADD
+					when iOR  => IR_DECOD_out <= "000000000000000000010000"; -- 64 OR
+					when iAND => IR_DECOD_out <= "000000000000000000100000"; -- 80 AND
+					when iNOT => IR_DECOD_out <= "000000000000000001000000"; -- 96 NOT
+					when iSUB => IR_DECOD_out <= "000000000000000010000000"; -- 112 SUB
+					when iJMP => IR_DECOD_out <= "000000000000000100000000"; -- 128 JMP
+					when iJN  => IR_DECOD_out <= "000000000000001000000000"; -- 144 JN
+					when iJP  => IR_DECOD_out <= "000000000000010000000000"; -- 148 JP
+					when iJV  => IR_DECOD_out <= "000000000000100000000000"; -- 152 JV
+					when iJNV => IR_DECOD_out <= "000000000001000000000000"; -- 156 JNV
+					when iJZ  => IR_DECOD_out <= "000000000010000000000000"; -- 160 JZ
+					when iJNZ => IR_DECOD_out <= "000000000100000000000000"; -- 164 JNZ
+					when iJC  => IR_DECOD_out <= "000000001000000000000000"; -- 176 JC
+					when iJNC => IR_DECOD_out <= "000000010000000000000000"; -- 180 JNC
+					when iJB  => IR_DECOD_out <= "000000100000000000000000"; -- 184 JB
+					when iJNB => IR_DECOD_out <= "000001000000000000000000"; -- 188 JNB
+					when iSHR => IR_DECOD_out <= "000010000000000000000000"; -- 224 SHR
+					when iSHL => IR_DECOD_out <= "000100000000000000000000"; -- 225 SHL
+					when iROR => IR_DECOD_out <= "001000000000000000000000"; -- 226 ROR
+					when iROL => IR_DECOD_out <= "010000000000000000000000"; -- 227 ROL
+					when iHLT => IR_DECOD_out <= "100000000000000000000000"; -- 240 HLT
+					when others => IR_DECOD_out <= "000000000000000000000001";  -- 00 NOP
                 end case;
 			end process;
     end Behavioral;

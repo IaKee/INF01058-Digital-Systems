@@ -330,7 +330,7 @@ architecture Behavioral of control is
 						else
 							-- for any sucessful jumping instruction
 							-- sets memory cursor position to current reg_PC value
-							sel_MUX_MAR <= "0" -- reg_MA <= reg_PC
+							sel_MUX_MAR <= "0"; -- reg_MA <= reg_PC
 							load_MA <= '1';  -- updates reg_MA with reg_PC
 
 							-- goes to S4
