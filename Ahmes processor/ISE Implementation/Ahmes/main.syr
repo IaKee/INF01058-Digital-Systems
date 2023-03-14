@@ -3,14 +3,14 @@ Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
 --> Parameter TMPDIR set to xst/projnav.tmp
 
 
-Total REAL time to Xst completion: 1.00 secs
-Total CPU time to Xst completion: 0.06 secs
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.07 secs
  
 --> Parameter xsthdpdir set to xst
 
 
-Total REAL time to Xst completion: 1.00 secs
-Total CPU time to Xst completion: 0.06 secs
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.08 secs
  
 --> Reading design: main.prj
 
@@ -108,9 +108,9 @@ Cores Search Directories           : {"ipcore_dir"  }
 =========================================================================
 *                          HDL Parsing                                  *
 =========================================================================
-Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\ipcore_dir\mem.vhd" into library work
-Parsing entity <mem>.
-Parsing architecture <mem_a> of entity <mem>.
+Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\ipcore_dir\mem_ahmes.vhd" into library work
+Parsing entity <mem_ahmes>.
+Parsing architecture <mem_ahmes_a> of entity <mem_ahmes>.
 Parsing VHDL file "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\datapath.vhd" into library work
 Parsing entity <datapath>.
 Parsing architecture <Behavioral> of entity <datapath>.
@@ -128,11 +128,11 @@ Parsing architecture <Behavioral> of entity <main>.
 Elaborating entity <main> (architecture <Behavioral>) from library <work>.
 
 Elaborating entity <control> (architecture <Behavioral>) from library <work>.
-INFO:HDLCompiler:679 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\control.vhd" Line 466. Case statement is complete. others clause is never selected
+INFO:HDLCompiler:679 - "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\control.vhd" Line 475. Case statement is complete. others clause is never selected
 
 Elaborating entity <datapath> (architecture <Behavioral>) from library <work>.
 
-Elaborating entity <mem> (architecture <mem_a>) from library <work>.
+Elaborating entity <mem_ahmes> (architecture <mem_ahmes_a>) from library <work>.
 
 =========================================================================
 *                           HDL Synthesis                               *
@@ -148,17 +148,23 @@ Synthesizing Unit <control>.
     Related source file is "D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\ISE Implementation\Ahmes\control.vhd".
 WARNING:Xst:647 - Input <instruction_flags<8:8>> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
     Found 4-bit register for signal <current_state>.
-    Found 8x1-bit Read Only RAM for signal <load_I>
-    Found 4x1-bit Read Only RAM for signal <load_MD>
-WARNING:Xst:737 - Found 1-bit latch for signal <next_state<3>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
-WARNING:Xst:737 - Found 1-bit latch for signal <next_state<2>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
-WARNING:Xst:737 - Found 1-bit latch for signal <next_state<1>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
-WARNING:Xst:737 - Found 1-bit latch for signal <next_state<0>>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
+    Found finite state machine <FSM_0> for signal <current_state>.
+    -----------------------------------------------------------------------
+    | States             | 9                                              |
+    | Transitions        | 95                                             |
+    | Inputs             | 29                                             |
+    | Outputs            | 8                                              |
+    | Clock              | CLOCK (rising_edge)                            |
+    | Reset              | RESET (positive)                               |
+    | Reset type         | asynchronous                                   |
+    | Reset State        | s0                                             |
+    | Power Up State     | s0                                             |
+    | Encoding           | auto                                           |
+    | Implementation     | LUT                                            |
+    -----------------------------------------------------------------------
     Summary:
-	inferred   2 RAM(s).
-	inferred   4 D-type flip-flop(s).
-	inferred   4 Latch(s).
-	inferred 140 Multiplexer(s).
+	inferred  89 Multiplexer(s).
+	inferred   1 Finite State Machine(s).
 Unit <control> synthesized.
 
 Synthesizing Unit <datapath>.
@@ -173,9 +179,9 @@ Synthesizing Unit <datapath>.
     Found 8-bit register for signal <reg_MA>.
     Found 8-bit register for signal <reg_MD>.
     Found 8-bit register for signal <reg_PC>.
-    Found 8-bit adder for signal <reg_PC[7]_GND_12_o_add_5_OUT> created at line 1241.
-    Found 9-bit adder for signal <GND_12_o_GND_12_o_add_23_OUT> created at line 311.
-    Found 9-bit subtractor for signal <GND_12_o_GND_12_o_sub_28_OUT<8:0>> created at line 325.
+    Found 8-bit adder for signal <reg_PC[7]_GND_8_o_add_5_OUT> created at line 1241.
+    Found 9-bit adder for signal <GND_8_o_GND_8_o_add_23_OUT> created at line 311.
+    Found 9-bit subtractor for signal <GND_8_o_GND_8_o_sub_28_OUT<8:0>> created at line 340.
     Found 9-bit 13-to-1 multiplexer for signal <ALU_op> created at line 309.
 WARNING:Xst:737 - Found 1-bit latch for signal <flag_V>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
 WARNING:Xst:737 - Found 1-bit latch for signal <flag_B>. Latches may be generated from incomplete case or if statements. We do not recommend the use of latches in FPGA/CPLD designs, as they may lead to timing problems.
@@ -183,30 +189,27 @@ WARNING:Xst:737 - Found 1-bit latch for signal <flag_B>. Latches may be generate
 	inferred   2 Adder/Subtractor(s).
 	inferred  45 D-type flip-flop(s).
 	inferred   2 Latch(s).
-	inferred  20 Multiplexer(s).
+	inferred  22 Multiplexer(s).
 Unit <datapath> synthesized.
 
 =========================================================================
 HDL Synthesis Report
 
 Macro Statistics
-# RAMs                                                 : 2
- 4x1-bit single-port Read Only RAM                     : 1
- 8x1-bit single-port Read Only RAM                     : 1
 # Adders/Subtractors                                   : 2
  8-bit adder                                           : 1
  9-bit addsub                                          : 1
-# Registers                                            : 11
+# Registers                                            : 10
  1-bit register                                        : 5
- 4-bit register                                        : 1
  8-bit register                                        : 5
-# Latches                                              : 6
- 1-bit latch                                           : 6
-# Multiplexers                                         : 160
- 1-bit 2-to-1 multiplexer                              : 109
- 4-bit 2-to-1 multiplexer                              : 32
+# Latches                                              : 2
+ 1-bit latch                                           : 2
+# Multiplexers                                         : 111
+ 1-bit 2-to-1 multiplexer                              : 70
+ 4-bit 2-to-1 multiplexer                              : 22
  8-bit 2-to-1 multiplexer                              : 3
  9-bit 2-to-1 multiplexer                              : 16
+# FSMs                                                 : 1
 
 =========================================================================
 INFO:Xst:1767 - HDL ADVISOR - Resource sharing has identified that some arithmetic operations in this design can share the same physical resources for reduced device utilization. For improved clock frequency you may try to disable resource sharing.
@@ -215,33 +218,8 @@ INFO:Xst:1767 - HDL ADVISOR - Resource sharing has identified that some arithmet
 *                       Advanced HDL Synthesis                          *
 =========================================================================
 
-Reading core <ipcore_dir/mem.ngc>.
-Loading core <mem> for timing and area information for instance <mem_ahmes>.
-
-Synthesizing (advanced) Unit <control>.
-INFO:Xst:3218 - HDL ADVISOR - The RAM <Mram_load_I> will be implemented on LUTs either because you have described an asynchronous read or because of currently unsupported block RAM features. If you have described an asynchronous read, making it synchronous would allow you to take advantage of available block RAM resources, for optimized device usage and improved timings. Please refer to your documentation for coding guidelines.
-    -----------------------------------------------------------------------
-    | ram_type           | Distributed                         |          |
-    -----------------------------------------------------------------------
-    | Port A                                                              |
-    |     aspect ratio   | 8-word x 1-bit                      |          |
-    |     weA            | connected to signal <GND>           | high     |
-    |     addrA          | connected to signal <current_state<2:0>> |          |
-    |     diA            | connected to signal <GND>           |          |
-    |     doA            | connected to signal <load_I>        |          |
-    -----------------------------------------------------------------------
-INFO:Xst:3218 - HDL ADVISOR - The RAM <Mram_load_MD> will be implemented on LUTs either because you have described an asynchronous read or because of currently unsupported block RAM features. If you have described an asynchronous read, making it synchronous would allow you to take advantage of available block RAM resources, for optimized device usage and improved timings. Please refer to your documentation for coding guidelines.
-    -----------------------------------------------------------------------
-    | ram_type           | Distributed                         |          |
-    -----------------------------------------------------------------------
-    | Port A                                                              |
-    |     aspect ratio   | 4-word x 1-bit                      |          |
-    |     weA            | connected to signal <GND>           | high     |
-    |     addrA          | connected to signal <(current_state<2>,current_state<0>)> |          |
-    |     diA            | connected to signal <GND>           |          |
-    |     doA            | connected to signal <load_MD>       |          |
-    -----------------------------------------------------------------------
-Unit <control> synthesized (advanced).
+Reading core <ipcore_dir/mem_ahmes.ngc>.
+Loading core <mem_ahmes> for timing and area information for instance <mem>.
 
 Synthesizing (advanced) Unit <datapath>.
 The following registers are absorbed into counter <reg_PC>: 1 register on signal <reg_PC>.
@@ -251,26 +229,39 @@ Unit <datapath> synthesized (advanced).
 Advanced HDL Synthesis Report
 
 Macro Statistics
-# RAMs                                                 : 2
- 4x1-bit single-port distributed Read Only RAM         : 1
- 8x1-bit single-port distributed Read Only RAM         : 1
 # Adders/Subtractors                                   : 1
  9-bit addsub                                          : 1
 # Counters                                             : 1
  8-bit up counter                                      : 1
-# Registers                                            : 41
- Flip-Flops                                            : 41
-# Multiplexers                                         : 158
- 1-bit 2-to-1 multiplexer                              : 108
- 4-bit 2-to-1 multiplexer                              : 32
+# Registers                                            : 37
+ Flip-Flops                                            : 37
+# Multiplexers                                         : 109
+ 1-bit 2-to-1 multiplexer                              : 69
+ 4-bit 2-to-1 multiplexer                              : 22
  8-bit 2-to-1 multiplexer                              : 2
  9-bit 2-to-1 multiplexer                              : 16
+# FSMs                                                 : 1
 
 =========================================================================
 
 =========================================================================
 *                         Low Level Synthesis                           *
 =========================================================================
+Analyzing FSM <MFsm> for best encoding.
+Optimizing FSM <CTRL/FSM_0> on signal <current_state[1:4]> with user encoding.
+-------------------
+ State | Encoding
+-------------------
+ s0    | 0000
+ s1    | 0001
+ s2    | 0010
+ s3    | 0011
+ s4    | 0100
+ s5    | 0101
+ s6    | 0110
+ s7    | 0111
+ s8    | 1000
+-------------------
 
 Optimizing unit <main> ...
 
@@ -282,9 +273,8 @@ INFO:Xst:2261 - The FF/Latch <DP/reg_N> in Unit <main> is equivalent to the foll
 Mapping all equations...
 Building and optimizing final netlist ...
 Found area constraint ratio of 100 (+ 5) on block main, actual ratio is 0.
-FlipFlop CTRL/current_state_2 has been replicated 1 time(s)
-FlipFlop DP/reg_I_4 has been replicated 2 time(s)
-FlipFlop DP/reg_I_5 has been replicated 1 time(s)
+FlipFlop DP/reg_I_6 has been replicated 1 time(s)
+FlipFlop DP/reg_I_7 has been replicated 1 time(s)
 
 Final Macro Processing ...
 
@@ -292,8 +282,8 @@ Final Macro Processing ...
 Final Register Report
 
 Macro Statistics
-# Registers                                            : 52
- Flip-Flops                                            : 52
+# Registers                                            : 50
+ Flip-Flops                                            : 50
 
 =========================================================================
 
@@ -316,21 +306,21 @@ Top Level Output File Name         : main.ngc
 
 Primitive and Black Box Usage:
 ------------------------------
-# BELS                             : 208
+# BELS                             : 212
 #      GND                         : 2
-#      LUT2                        : 6
-#      LUT3                        : 25
-#      LUT4                        : 13
-#      LUT5                        : 46
-#      LUT6                        : 82
+#      LUT2                        : 5
+#      LUT3                        : 24
+#      LUT4                        : 21
+#      LUT5                        : 33
+#      LUT6                        : 90
 #      MUXCY                       : 15
-#      MUXF7                       : 1
-#      VCC                         : 1
+#      MUXF7                       : 3
+#      VCC                         : 2
 #      XORCY                       : 17
-# FlipFlops/Latches                : 58
-#      FDC                         : 5
-#      FDCE                        : 47
-#      LD                          : 6
+# FlipFlops/Latches                : 52
+#      FDC                         : 4
+#      FDCE                        : 46
+#      LD                          : 2
 # RAMS                             : 1
 #      RAMB18E1                    : 1
 # Clock Buffers                    : 1
@@ -346,16 +336,16 @@ Selected Device : 7a100tcsg324-3
 
 
 Slice Logic Utilization: 
- Number of Slice Registers:              58  out of  126800     0%  
- Number of Slice LUTs:                  172  out of  63400     0%  
-    Number used as Logic:               172  out of  63400     0%  
+ Number of Slice Registers:              52  out of  126800     0%  
+ Number of Slice LUTs:                  173  out of  63400     0%  
+    Number used as Logic:               173  out of  63400     0%  
 
 Slice Logic Distribution: 
- Number of LUT Flip Flop pairs used:    184
-   Number with an unused Flip Flop:     126  out of    184    68%  
-   Number with an unused LUT:            12  out of    184     6%  
-   Number of fully used LUT-FF pairs:    46  out of    184    25%  
-   Number of unique control sets:         9
+ Number of LUT Flip Flop pairs used:    181
+   Number with an unused Flip Flop:     129  out of    181    71%  
+   Number with an unused LUT:             8  out of    181     4%  
+   Number of fully used LUT-FF pairs:    44  out of    181    24%  
+   Number of unique control sets:         7
 
 IO Utilization: 
  Number of IOs:                          10
@@ -384,15 +374,13 @@ NOTE: THESE TIMING NUMBERS ARE ONLY A SYNTHESIS ESTIMATE.
 
 Clock Information:
 ------------------
----------------------------------------------------------------------------------------+---------------------------+-------+
-Clock Signal                                                                           | Clock buffer(FF name)     | Load  |
----------------------------------------------------------------------------------------+---------------------------+-------+
-CLOCK                                                                                  | BUFGP                     | 53    |
-CTRL/current_state[3]_PWR_6_o_Mux_64_o(CTRL/Mmux_current_state[3]_PWR_6_o_Mux_64_o11:O)| NONE(*)(CTRL/next_state_1)| 4     |
-DP/_n0487<3>1(DP/_n0487<3>11:O)                                                        | NONE(*)(DP/flag_V)        | 1     |
-DP/_n0487(DP/_n0487<3>2:O)                                                             | NONE(*)(DP/flag_B)        | 1     |
----------------------------------------------------------------------------------------+---------------------------+-------+
-(*) These 3 clock signal(s) are generated by combinatorial logic,
+-------------------------------------------------------------------+------------------------+-------+
+Clock Signal                                                       | Clock buffer(FF name)  | Load  |
+-------------------------------------------------------------------+------------------------+-------+
+CLOCK                                                              | BUFGP                  | 51    |
+DP/sel_ALU[3]_GND_10_o_Mux_32_o(DP/sel_ALU[3]_GND_10_o_Mux_32_o1:O)| NONE(*)(DP/flag_V)     | 2     |
+-------------------------------------------------------------------+------------------------+-------+
+(*) This 1 clock signal(s) are generated by combinatorial logic,
 and XST is not able to identify which are the primary clock signals.
 Please use the CLOCK_SIGNAL constraint to specify the clock signal(s) generated by combinatorial logic.
 INFO:Xst:2169 - HDL ADVISOR - Some clock signals were not automatically buffered by XST with BUFG/BUFR resources. Please use the buffer_type constraint in order to insert these buffers to the clock signals to help prevent skew problems.
@@ -405,7 +393,7 @@ Timing Summary:
 ---------------
 Speed Grade: -3
 
-   Minimum period: 5.469ns (Maximum Frequency: 182.835MHz)
+   Minimum period: 5.152ns (Maximum Frequency: 194.114MHz)
    Minimum input arrival time before clock: 0.739ns
    Maximum output required time after clock: 2.129ns
    Maximum combinational path delay: No path found
@@ -416,10 +404,10 @@ All values displayed in nanoseconds (ns)
 
 =========================================================================
 Timing constraint: Default period analysis for Clock 'CLOCK'
-  Clock period: 5.469ns (frequency: 182.835MHz)
-  Total number of paths / destination ports: 89444 / 120
+  Clock period: 5.152ns (frequency: 194.114MHz)
+  Total number of paths / destination ports: 72690 / 122
 -------------------------------------------------------------------------
-Delay:               5.469ns (Levels of Logic = 10)
+Delay:               5.152ns (Levels of Logic = 11)
   Source:            DP/reg_I_0 (FF)
   Destination:       DP/reg_Z (FF)
   Source Clock:      CLOCK rising
@@ -429,37 +417,38 @@ Delay:               5.469ns (Levels of Logic = 10)
                                 Gate     Net
     Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
     ----------------------------------------  ------------
-     FDCE:C->Q            12   0.361   0.734  DP/reg_I_0 (DP/reg_I_0)
-     LUT5:I0->O            5   0.097   0.314  DP/PWR_12_o_reg_I[7]_equal_46_o<7>11 (DP/PWR_12_o_reg_I[7]_equal_46_o<7>1)
-     LUT4:I3->O            2   0.097   0.383  DP/PWR_12_o_reg_I[7]_equal_52_o<7>1 (s_instruction_flags<16>)
-     LUT5:I3->O            9   0.097   0.548  CTRL/Mmux_current_state[3]_X_5_o_Mux_65_o1113 (CTRL/Mmux_current_state[3]_X_5_o_Mux_65_o1113)
-     LUT6:I3->O            2   0.097   0.516  DP/Mmux_ALU_op7_A4_SW5 (N55)
-     LUT3:I0->O            1   0.097   0.295  DP/Mmux_ALU_op7_rs_lut<3>_SW0 (N137)
-     LUT6:I5->O            1   0.097   0.000  DP/Mmux_ALU_op7_rs_lut<3> (DP/Mmux_ALU_op7_rs_lut<3>)
-     MUXCY:S->O            1   0.353   0.000  DP/Mmux_ALU_op7_rs_cy<3> (DP/Mmux_ALU_op7_rs_cy<3>)
+     FDCE:C->Q            17   0.361   0.630  DP/reg_I_0 (DP/reg_I_0)
+     LUT4:I0->O           18   0.097   0.374  DP/GND_8_o_reg_I[7]_equal_37_o<7>11 (DP/GND_8_o_reg_I[7]_equal_37_o<7>1)
+     LUT5:I4->O           12   0.097   0.562  DP/GND_8_o_reg_I[7]_equal_42_o<7>1 (s_instruction_flags<6>)
+     LUT6:I3->O            1   0.097   0.295  CTRL/oJN_reg_N_AND_2_o11_SW0 (N130)
+     LUT6:I5->O           29   0.097   0.618  CTRL/Mmux_sel_ALU2 (s_sel_ALU<1>)
+     LUT6:I3->O            1   0.097   0.000  DP/Mmux_ALU_op7_rs_lut<1> (DP/Mmux_ALU_op7_rs_lut<1>)
+     MUXCY:S->O            1   0.353   0.000  DP/Mmux_ALU_op7_rs_cy<1> (DP/Mmux_ALU_op7_rs_cy<1>)
+     MUXCY:CI->O           1   0.023   0.000  DP/Mmux_ALU_op7_rs_cy<2> (DP/Mmux_ALU_op7_rs_cy<2>)
+     MUXCY:CI->O           1   0.023   0.000  DP/Mmux_ALU_op7_rs_cy<3> (DP/Mmux_ALU_op7_rs_cy<3>)
      XORCY:CI->O           1   0.370   0.295  DP/Mmux_ALU_op7_rs_xor<4> (DP/Mmux_ALU_op7_split<4>)
-     LUT5:I4->O            2   0.097   0.515  DP/Mmux_ALU_op1210 (DP/Mmux_ALU_op12_split<4>)
-     LUT6:I3->O            1   0.097   0.000  DP/flag_Z<7> (DP/flag_Z)
+     LUT5:I4->O            2   0.097   0.561  DP/Mmux_ALU_op1210 (DP/Mmux_ALU_op12_split<4>)
+     LUT6:I2->O            1   0.097   0.000  DP/flag_Z<7> (DP/flag_Z)
      FDCE:D                    0.008          DP/reg_Z
     ----------------------------------------
-    Total                      5.469ns (1.868ns logic, 3.601ns route)
-                                       (34.2% logic, 65.8% route)
+    Total                      5.152ns (1.817ns logic, 3.335ns route)
+                                       (35.3% logic, 64.7% route)
 
 =========================================================================
 Timing constraint: Default OFFSET IN BEFORE for Clock 'CLOCK'
-  Total number of paths / destination ports: 52 / 52
+  Total number of paths / destination ports: 50 / 50
 -------------------------------------------------------------------------
 Offset:              0.739ns (Levels of Logic = 1)
   Source:            RESET (PAD)
-  Destination:       CTRL/current_state_3 (FF)
+  Destination:       CTRL/current_state_FSM_FFd1 (FF)
   Destination Clock: CLOCK rising
 
-  Data Path: RESET to CTRL/current_state_3
+  Data Path: RESET to CTRL/current_state_FSM_FFd1
                                 Gate     Net
     Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
     ----------------------------------------  ------------
-     IBUF:I->O            52   0.001   0.389  RESET_IBUF (RESET_IBUF)
-     FDC:CLR                   0.349          CTRL/current_state_0
+     IBUF:I->O            50   0.001   0.389  RESET_IBUF (RESET_IBUF)
+     FDC:CLR                   0.349          CTRL/current_state_FSM_FFd3
     ----------------------------------------
     Total                      0.739ns (0.350ns logic, 0.389ns route)
                                        (47.4% logic, 52.6% route)
@@ -469,16 +458,16 @@ Timing constraint: Default OFFSET OUT AFTER for Clock 'CLOCK'
   Total number of paths / destination ports: 8 / 8
 -------------------------------------------------------------------------
 Offset:              2.129ns (Levels of Logic = 2)
-  Source:            DP/mem_ahmes/U0/xst_blk_mem_generator/gnativebmg.native_blk_mem_gen/valid.cstr/ramloop[0].ram.r/v6_noinit.ram/NO_BMM_INFO.SP.WIDE_PRIM18.ram (RAM)
+  Source:            DP/mem/U0/xst_blk_mem_generator/gnativebmg.native_blk_mem_gen/valid.cstr/ramloop[0].ram.r/v6_init.ram/NO_BMM_INFO.SP.WIDE_PRIM18.ram (RAM)
   Destination:       mem_out<7> (PAD)
   Source Clock:      CLOCK rising
 
-  Data Path: DP/mem_ahmes/U0/xst_blk_mem_generator/gnativebmg.native_blk_mem_gen/valid.cstr/ramloop[0].ram.r/v6_noinit.ram/NO_BMM_INFO.SP.WIDE_PRIM18.ram to mem_out<7>
+  Data Path: DP/mem/U0/xst_blk_mem_generator/gnativebmg.native_blk_mem_gen/valid.cstr/ramloop[0].ram.r/v6_init.ram/NO_BMM_INFO.SP.WIDE_PRIM18.ram to mem_out<7>
                                 Gate     Net
     Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
     ----------------------------------------  ------------
-     RAMB18E1:CLKARDCLK->DOADO7    2   1.846   0.283  U0/xst_blk_mem_generator/gnativebmg.native_blk_mem_gen/valid.cstr/ramloop[0].ram.r/v6_noinit.ram/NO_BMM_INFO.SP.WIDE_PRIM18.ram (douta<7>)
-     end scope: 'DP/mem_ahmes:douta<7>'
+     RAMB18E1:CLKARDCLK->DOADO7    2   1.846   0.283  U0/xst_blk_mem_generator/gnativebmg.native_blk_mem_gen/valid.cstr/ramloop[0].ram.r/v6_init.ram/NO_BMM_INFO.SP.WIDE_PRIM18.ram (douta<7>)
+     end scope: 'DP/mem:douta<7>'
      OBUF:I->O                 0.000          mem_out_7_OBUF (mem_out<7>)
     ----------------------------------------
     Total                      2.129ns (1.846ns logic, 0.283ns route)
@@ -490,51 +479,33 @@ Cross Clock Domains Report:
 --------------------------
 
 Clock to Setup on destination clock CLOCK
---------------------------------------+---------+---------+---------+---------+
-                                      | Src:Rise| Src:Fall| Src:Rise| Src:Fall|
-Source Clock                          |Dest:Rise|Dest:Rise|Dest:Fall|Dest:Fall|
---------------------------------------+---------+---------+---------+---------+
-CLOCK                                 |    5.469|         |         |         |
-CTRL/current_state[3]_PWR_6_o_Mux_64_o|         |    0.763|         |         |
-DP/_n0487                             |         |    0.759|         |         |
-DP/_n0487<3>1                         |         |    0.759|         |         |
---------------------------------------+---------+---------+---------+---------+
+-------------------------------+---------+---------+---------+---------+
+                               | Src:Rise| Src:Fall| Src:Rise| Src:Fall|
+Source Clock                   |Dest:Rise|Dest:Rise|Dest:Fall|Dest:Fall|
+-------------------------------+---------+---------+---------+---------+
+CLOCK                          |    5.152|         |         |         |
+DP/sel_ALU[3]_GND_10_o_Mux_32_o|         |    0.759|         |         |
+-------------------------------+---------+---------+---------+---------+
 
-Clock to Setup on destination clock CTRL/current_state[3]_PWR_6_o_Mux_64_o
+Clock to Setup on destination clock DP/sel_ALU[3]_GND_10_o_Mux_32_o
 ---------------+---------+---------+---------+---------+
                | Src:Rise| Src:Fall| Src:Rise| Src:Fall|
 Source Clock   |Dest:Rise|Dest:Rise|Dest:Fall|Dest:Fall|
 ---------------+---------+---------+---------+---------+
-CLOCK          |         |         |    4.567|         |
----------------+---------+---------+---------+---------+
-
-Clock to Setup on destination clock DP/_n0487
----------------+---------+---------+---------+---------+
-               | Src:Rise| Src:Fall| Src:Rise| Src:Fall|
-Source Clock   |Dest:Rise|Dest:Rise|Dest:Fall|Dest:Fall|
----------------+---------+---------+---------+---------+
-CLOCK          |         |         |    5.735|         |
----------------+---------+---------+---------+---------+
-
-Clock to Setup on destination clock DP/_n0487<3>1
----------------+---------+---------+---------+---------+
-               | Src:Rise| Src:Fall| Src:Rise| Src:Fall|
-Source Clock   |Dest:Rise|Dest:Rise|Dest:Fall|Dest:Fall|
----------------+---------+---------+---------+---------+
-CLOCK          |         |         |    4.932|         |
+CLOCK          |         |         |    4.975|         |
 ---------------+---------+---------+---------+---------+
 
 =========================================================================
 
 
-Total REAL time to Xst completion: 7.00 secs
-Total CPU time to Xst completion: 6.80 secs
+Total REAL time to Xst completion: 9.00 secs
+Total CPU time to Xst completion: 9.32 secs
  
 --> 
 
-Total memory usage is 4695752 kilobytes
+Total memory usage is 4617992 kilobytes
 
 Number of errors   :    0 (   0 filtered)
-Number of warnings :    7 (   0 filtered)
-Number of infos    :    5 (   0 filtered)
+Number of warnings :    3 (   0 filtered)
+Number of infos    :    3 (   0 filtered)
 

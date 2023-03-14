@@ -1,0 +1,5 @@
+vhdl work "ipcore_dir/mem_ahmes.vhd"
+vhdl work "datapath.vhd"
+vhdl work "control.vhd"
+vhdl work "main.vhd"
+vhdl work "ahmes_tb.vhd"

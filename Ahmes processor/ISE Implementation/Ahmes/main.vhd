@@ -11,29 +11,29 @@ end main;
 
 architecture Behavioral of main is
 	-- control signals for linking datapath and control units
-	signal s_instruction_flags: std_logic_vector(23 downto 0);
-	signal s_reg_N: std_logic;
-	signal s_reg_Z: std_logic;
-	signal s_reg_V: std_logic;
-	signal s_reg_C: std_logic;
-	signal s_reg_B: std_logic;
-	signal s_inc_PC: std_logic;
-	signal s_load_AC: std_logic;
-	signal s_load_PC: std_logic;
-	signal s_load_MA: std_logic;
-	signal s_load_MD: std_logic;
-	signal s_load_I: std_logic;
-	signal s_load_N: std_logic;
-	signal s_load_Z: std_logic;
-	signal s_load_V: std_logic;
-	signal s_load_C: std_logic;
-	signal s_load_B: std_logic;
-	signal s_sel_MUX_MAR: std_logic_vector(0 downto 0);
-	signal s_sel_MUX_MDR: std_logic_vector(0 downto 0);
-	signal s_sel_ALU: std_logic_vector(3 downto 0);
-	signal s_mem_read: std_logic_vector(0 downto 0);
-	signal s_mem_write: std_logic_vector(0 downto 0);
-	signal o_mem_out: std_logic_vector(7 downto 0);
+	signal s_instruction_flags: std_logic_vector(23 downto 0):= "000000000000000000000000";
+	signal s_reg_N: std_logic:= '0';
+	signal s_reg_Z: std_logic:= '0';
+	signal s_reg_V: std_logic:= '0';
+	signal s_reg_C: std_logic:= '0';
+	signal s_reg_B: std_logic:= '0';
+	signal s_inc_PC: std_logic:= '0';
+	signal s_load_AC: std_logic:= '0';
+	signal s_load_PC: std_logic:= '0';
+	signal s_load_MA: std_logic:= '0';
+	signal s_load_MD: std_logic:= '0';
+	signal s_load_I: std_logic:= '0';
+	signal s_load_N: std_logic:= '0';
+	signal s_load_Z: std_logic:= '0';
+	signal s_load_V: std_logic:= '0';
+	signal s_load_C: std_logic:= '0';
+	signal s_load_B: std_logic:= '0';
+	signal s_sel_MUX_MAR: std_logic_vector(0 downto 0):= "0";
+	signal s_sel_MUX_MDR: std_logic_vector(0 downto 0):= "0";
+	signal s_sel_ALU: std_logic_vector(3 downto 0):= "0000";
+	signal s_mem_read: std_logic_vector(0 downto 0):= "0";
+	signal s_mem_write: std_logic_vector(0 downto 0):= "0";
+	signal o_mem_out: std_logic_vector(7 downto 0):= "00000000";
 	
 	component control
 	port(
@@ -78,8 +78,8 @@ architecture Behavioral of main is
 			load_V: in std_logic;
 			load_C: in std_logic;
 			load_B: in std_logic;
-			sel_MUX_MAR: in std_logic_vector(0 to 0);
-			sel_MUX_MDR: in std_logic_vector(0 to 0);
+			sel_MUX_MAR: in std_logic_vector(0 downto 0);
+			sel_MUX_MDR: in std_logic_vector(0 downto 0);
 			sel_ALU: in std_logic_vector(3 downto 0);
 			mem_read: in std_logic_vector(0 to 0);
 			mem_write: in std_logic_vector(0 to 0);          

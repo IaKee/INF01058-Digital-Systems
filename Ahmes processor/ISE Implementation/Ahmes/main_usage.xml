@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- IMPORTANT: This is an internal file that has been generated
+     by the Xilinx ISE software.  Any direct editing or
+     changes made to this file may result in unpredictable
+     behavior or data corruption.  It is strongly advised that
+     users do not edit the contents of this file. -->
+<DeviceUsageSummary rev="5">
+<DesignStatistics TimeStamp="Fri Mar 10 00:16:41 2023"><group name="MiscellaneousStatistics">
+<item name="AGG_BONDED_IO" rev="5">
+<attrib name="value" value="10"/></item>
+<item name="AGG_IO" rev="5">
+<attrib name="value" value="10"/></item>
+<item name="AGG_SLICE" rev="5">
+<attrib name="value" value="60"/></item>
+<item name="NUM_BONDED_IOB" rev="5">
+<attrib name="value" value="10"/></item>
+<item name="NUM_BSFULL" rev="5">
+<attrib name="value" value="41"/></item>
+<item name="NUM_BSLUTONLY" rev="5">
+<attrib name="value" value="118"/></item>
+<item name="NUM_BSREGONLY" rev="5">
+<attrib name="value" value="3"/></item>
+<item name="NUM_BSUSED" rev="5">
+<attrib name="value" value="162"/></item>
+<item name="NUM_BUFG" rev="5">
+<attrib name="value" value="1"/></item>
+<item name="NUM_LOGIC_O5ANDO6" rev="5">
+<attrib name="value" value="18"/></item>
+<item name="NUM_LOGIC_O5ONLY" rev="5">
+<attrib name="value" value="1"/></item>
+<item name="NUM_LOGIC_O6ONLY" rev="5">
+<attrib name="value" value="139"/></item>
+<item name="NUM_LUT_RT_DRIVES_CARRY4" rev="5">
+<attrib name="value" value="1"/></item>
+<item name="NUM_LUT_RT_O5ANDO6" rev="5">
+<attrib name="value" value="1"/></item>
+<item name="NUM_LUT_RT_O6" rev="5">
+<attrib name="value" value="1"/></item>
+<item name="NUM_RAMB18E1" rev="5">
+<attrib name="value" value="1"/></item>
+<item name="NUM_SLICEL" rev="5">
+<attrib name="value" value="60"/></item>
+<item name="NUM_SLICE_CARRY4" rev="5">
+<attrib name="value" value="5"/></item>
+<item name="NUM_SLICE_CONTROLSET" rev="5">
+<attrib name="value" value="8"/></item>
+<item name="NUM_SLICE_CYINIT" rev="5">
+<attrib name="value" value="179"/></item>
+<item name="NUM_SLICE_F7MUX" rev="5">
+<attrib name="value" value="3"/></item>
+<item name="NUM_SLICE_FF" rev="5">
+<attrib name="value" value="50"/></item>
+<item name="NUM_SLICE_LATCH" rev="5">
+<attrib name="value" value="2"/></item>
+<item name="NUM_SLICE_UNUSEDCTRL" rev="5">
+<attrib name="value" value="35"/></item>
+<item name="NUM_UNUSABLE_FF_BELS" rev="5">
+<attrib name="value" value="28"/></item>
+<item name="Xilinx Core blk_mem_gen_v7_3, Xilinx CORE Generator 14.7" rev="5">
+<attrib name="value" value="1"/></item>
+</group>
+</DesignStatistics>
+<CmdHistory>
+</CmdHistory>
+</DeviceUsageSummary>

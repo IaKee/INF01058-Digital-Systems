@@ -44,28 +44,28 @@ entity datapath is
 
 architecture Behavioral of datapath is
     -- registers
-    signal reg_PC: std_logic_vector(7 downto 0);
-    signal reg_AC: std_logic_vector (7 downto 0);
-    signal reg_MA: std_logic_vector(7 downto 0);
-    signal reg_MD: std_logic_vector(7 downto 0);
-	signal reg_I: std_logic_vector(7 downto 0);
-    signal MAR_MUX_out: std_logic_vector(7 downto 0);
-    signal MDR_MUX_out: std_logic_vector(7 downto 0);
-    signal ALU_out: std_logic_vector(7 downto 0);
-    signal omem_out: std_logic_vector(7 downto 0);
-    signal IR_DECOD_out: std_logic_vector(23 downto 0);
+    signal reg_PC: std_logic_vector(7 downto 0):= "00000000";
+    signal reg_AC: std_logic_vector (7 downto 0):= "00000000";
+    signal reg_MA: std_logic_vector(7 downto 0):= "00000000";
+    signal reg_MD: std_logic_vector(7 downto 0):= "00000000";
+	signal reg_I: std_logic_vector(7 downto 0):= "00000000";
+    signal MAR_MUX_out: std_logic_vector(7 downto 0):= "00000000";
+    signal MDR_MUX_out: std_logic_vector(7 downto 0):= "00000000";
+    signal ALU_out: std_logic_vector(7 downto 0):= "00000000";
+    signal omem_out: std_logic_vector(7 downto 0):= "00000000";
+    signal IR_DECOD_out: std_logic_vector(23 downto 0):= "000000000000000000000000";
     
     -- AC flags (for upkeeping internal values until the register update on rising edge)
-    signal flag_N: std_logic;
-    signal flag_Z: std_logic;
-    signal flag_V: std_logic;
-    signal flag_C: std_logic;
-    signal flag_B: std_logic;
+    signal flag_N: std_logic:= '0';
+    signal flag_Z: std_logic:= '0';
+    signal flag_V: std_logic:= '0';
+    signal flag_C: std_logic:= '0';
+    signal flag_B: std_logic:= '0';
 
     -- ALU
-    signal ALU_X: std_logic_vector(7 downto 0); -- recieves signals from reg_AC
-    signal ALU_Y: std_logic_vector(7 downto 0); -- recieves signals from reg_RDM;
-	signal ALU_op: std_logic_vector(8 downto 0); -- ALU operational signal
+    signal ALU_X: std_logic_vector(7 downto 0):= "00000000"; -- recieves signals from reg_AC
+    signal ALU_Y: std_logic_vector(7 downto 0):= "00000000"; -- recieves signals from reg_RDM;
+	signal ALU_op: std_logic_vector(8 downto 0):= "000000000"; -- ALU operational signal
     -- the extra bit is used for the overflow(V) flag
 
     -- ALU operation constants
@@ -108,7 +108,7 @@ architecture Behavioral of datapath is
 	constant iHLT: std_logic_vector(7 downto 0):= "11110000";
 
     -- BRAM memory component (mem_ahmes)
-    component mem
+    component mem_ahmes
 	    port(
             clka: in std_logic;
             wea: in std_logic_vector(0 downto 0);
@@ -127,12 +127,12 @@ architecture Behavioral of datapath is
         instruction_flags <= IR_DECOD_out;
 		mem_out <= omem_out;
 
-        mem_ahmes: mem
+        mem: mem_ahmes
             port map(
                 clka => CLOCK,
                 wea => mem_write,
                 addra => reg_MA,
-                dina => reg_MA,
+                dina => reg_MD,
                 douta => omem_out);
 		
         PC: process(CLOCK, RESET)  -- program counter register
@@ -315,12 +315,27 @@ architecture Behavioral of datapath is
                         else
                             flag_V <= '0';
                         end if;
+						
+						-- resets other flag signals
+						flag_B <= '0';
                     when ALUOR =>  -- OR
                         ALU_op <= std_logic_vector(('0' & ALU_X) or ('0' & ALU_Y));
+						
+						-- resets other flag signals
+						flag_B <= '0';
+						flag_V <= '1';
                     when ALUAND =>  -- AND
                         ALU_op <= std_logic_vector(('0' & ALU_X) and ('0' & ALU_Y));
+						
+						-- resets other flag signals
+						flag_B <= '0';
+						flag_V <= '1';
                     when ALUNOT =>  -- NOT
                         ALU_op <= std_logic_vector(not('0' & ALU_X));
+						
+						-- resets other flag signals
+						flag_B <= '0';
+						flag_V <= '1';
                     when ALUSUB =>  -- SUB
                         ALU_op <= std_logic_vector(unsigned('0' & ALU_X) - unsigned('0' & ALU_Y));
                         -- borrow flag
@@ -341,6 +356,10 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(3);
                         ALU_op(1) <= ALU_X(2);
                         ALU_op(0) <= ALU_X(1);
+						
+						-- resets other flag signals
+						flag_B <= '0';
+						flag_V <= '1';
                     when ALUSHL => -- SHL
                         ALU_op(8) <= ALU_X(7);  -- ALU_op, and by consequence carry recieves reg_AC msb
                         ALU_op(7) <= ALU_X(6); 
@@ -351,6 +370,10 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(1); 
                         ALU_op(1) <= ALU_X(0); 
                         ALU_op(0) <= '0'; -- ULA_out lsb recieves 0
+						
+						-- resets other flag signals
+						flag_B <= '0';
+						flag_V <= '1';
                     when ALUROR => -- ROR
                         ALU_op(8) <= ALU_X(0);
                         ALU_op(7) <= flag_C;
@@ -361,8 +384,12 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(3);
                         ALU_op(1) <= ALU_X(2);
                         ALU_op(0) <= ALU_X(1);
+						
+						-- resets other flag signals
+						flag_B <= '0';
+						flag_V <= '1';
                     when ALUROL => -- ROL
-                        ALU_op(8) <= ALU_X(7);
+						ALU_op(8) <= ALU_X(7);
                         ALU_op(7) <= ALU_X(6);
                         ALU_op(6) <= ALU_X(5);
                         ALU_op(5) <= ALU_X(4);
@@ -371,8 +398,16 @@ architecture Behavioral of datapath is
                         ALU_op(2) <= ALU_X(1);
                         ALU_op(1) <= ALU_X(0);
                         ALU_op(0) <= flag_C;
+						
+						-- resets other flag signals
+						flag_B <= '0';
+						flag_V <= '1';
                     when ALUY => -- ULAY
                         ALU_op <= std_logic_vector('0' & ALU_Y);
+						
+						-- resets other flag signals
+						flag_B <= '0';
+						flag_V <= '1';
                     when others => -- NOP (ULAX - reg_AC)
                         ALU_op <= '0' & ALU_X;  
                 end case;

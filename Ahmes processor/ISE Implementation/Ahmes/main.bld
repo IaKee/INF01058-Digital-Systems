@@ -8,7 +8,7 @@ main.ngc main.ngd
 Reading NGO file "D:/Documentos/Escola/UFRGS/Nono
 semestre/INF01058-Digital-Systems/Ahmes processor/ISE
 Implementation/Ahmes/main.ngc" ...
-Loading design module "ipcore_dir/mem.ngc"...
+Loading design module "ipcore_dir/mem_ahmes.ngc"...
 Gathering constraint information from source properties...
 Done.
 
@@ -29,10 +29,10 @@ NGDBUILD Design Results Summary:
   Number of errors:     0
   Number of warnings:   0
 
-Total memory usage is 4439972 kilobytes
+Total memory usage is 4462140 kilobytes
 
 Writing NGD file "main.ngd" ...
-Total REAL time to NGDBUILD completion:  5 sec
-Total CPU time to NGDBUILD completion:   3 sec
+Total REAL time to NGDBUILD completion:  4 sec
+Total CPU time to NGDBUILD completion:   4 sec
 
 Writing NGDBUILD log file "main.bld"...

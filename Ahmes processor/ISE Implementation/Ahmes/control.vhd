@@ -178,9 +178,12 @@ architecture Behavioral of control is
 						load_MA <= '1';
 						next_state <= S1;
 					when S1 =>
-						-- reads from memory
-						-- increments reg_PC
+						-- reads byte from memory updating MD
+						sel_MUX_MDR <= "0";
 						mem_read <= "1";
+						load_MD <= '1';
+
+						-- increments reg_PC
 						inc_PC <= '1';
 						next_state <= S2;
 					when S2 =>
@@ -327,20 +330,23 @@ architecture Behavioral of control is
 						else
 							-- for any sucessful jumping instruction
 							-- sets memory cursor position to current reg_PC value
-							sel_MUX_MAR <= "0"; -- reg_MA <= reg_PC
+							sel_MUX_MAR <= "0"; -- memory address register recieves data from PC
 							load_MA <= '1';  -- updates reg_MA with reg_PC
 
 							-- goes to S4
 							next_state <= S4;
 						end if;
 					when S4 =>
-						-- enables memory read signal
+						-- reads a new byte from memory
 						mem_read <= "1";
+						sel_MUX_MDR <= "0";  -- recieves output from memory
 						load_MD <= '1'; -- updates memory data register
 						
 						-- increments reg_PC for any of the following instructions
 						if(oSTA = '1' or oLDA = '1' or oADD = '1' or oOR = '1' or oAND = '1' or oSUB = '1') then
 							inc_PC <= '1';
+						else
+							inc_PC <= '0';
 						end if;
 
 						-- goes to S5
@@ -459,6 +465,9 @@ architecture Behavioral of control is
 
 							-- goto S0
 							next_state <= S0;
+						else
+							-- invalid instruction
+							next_state <= S8;	
 						end if;
 					when S8 =>
 						-- loop state (HALT)

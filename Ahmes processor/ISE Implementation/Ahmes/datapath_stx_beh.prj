@@ -1,0 +1,2 @@
+vhdl isim_temp "ipcore_dir/mem.vhd"
+vhdl isim_temp "datapath.vhd"

@@ -1,4 +1,4 @@
-vhdl work "ipcore_dir/mem.vhd"
+vhdl work "ipcore_dir/mem_ahmes.vhd"
 vhdl work "datapath.vhd"
 vhdl work "control.vhd"
 vhdl work "main.vhd"
