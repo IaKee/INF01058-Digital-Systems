@@ -31,5 +31,5 @@ Waiting for 4 sub-compilation(s) to finish...
 WARNING:Simulator - Unable to copy libPortabilityNOSH.dll to the simulation executable directory: boost::filesystem::copy_file: The system cannot find the path specified, "isim\ahmes_tb_isim_beh.exe.sim\libPortability.dll".
 Compiled 24 VHDL Units
 Built simulation executable D:/Documentos/Escola/UFRGS/Nono semestre/INF01058-Digital-Systems/Ahmes processor/ISE Implementation/Ahmes/ahmes_tb_isim_beh.exe
-Fuse Memory Usage: 41616 KB
+Fuse Memory Usage: 41844 KB
 Fuse CPU Usage: 421 ms

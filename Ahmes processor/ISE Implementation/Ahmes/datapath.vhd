@@ -34,16 +34,16 @@ entity datapath is
         -- ALU flags
         reg_N: out std_logic;
         reg_Z: out std_logic;
-        reg_V: out std_logic;
+        reg_V: out std_logic:= '0';
         reg_C: out std_logic;
-        reg_B: out std_logic;
+        reg_B: out std_logic:= '0';
         
         -- instruction flags (from reg_I)
         instruction_flags: out std_logic_vector(23 downto 0));
     end datapath;
 
 architecture Behavioral of datapath is
-    -- registers
+    -- registersf
     signal reg_PC: std_logic_vector(7 downto 0):= "00000000";
     signal reg_AC: std_logic_vector (7 downto 0):= "00000000";
     signal reg_MA: std_logic_vector(7 downto 0):= "00000000";
@@ -120,11 +120,6 @@ architecture Behavioral of datapath is
     begin  -- datapath behavioral start
         
         -- hw connections (not clock dependent)
-        ALU_out <= std_logic_vector(ALU_op(7 downto 0));  -- updates ALU output with 7 lsb of ALU_op
-        ALU_X <= reg_AC;  -- retrieves ALU X from reg_AC (accumulator)
-        ALU_Y <= reg_MD;  -- retrieves ALU Y from reg_MD (memory data)
-        flag_C <= ALU_op(8);  -- carry flag
-        instruction_flags <= IR_DECOD_out;
 		mem_out <= omem_out;
 
         mem: mem_ahmes
@@ -158,8 +153,11 @@ architecture Behavioral of datapath is
             begin
                 if(RESET = '1') then
                     reg_AC <= "00000000";
-                elsif(rising_edge(CLOCK) and load_AC = '1') then
-                    reg_AC <= std_logic_vector(ALU_out(7 downto 0));
+                elsif(rising_edge(CLOCK)) then
+					ALU_X <= reg_AC;  -- retrieves ALU X from reg_AC (accumulator)
+					if(load_AC = '1') then
+						reg_AC <= std_logic_vector(ALU_out(7 downto 0));
+					end if;
                 end if;
             end process;
         
@@ -255,8 +253,11 @@ architecture Behavioral of datapath is
             begin
                 if(RESET = '1') then
                     reg_MD <= "00000000";
-                elsif(rising_edge(CLOCK) and load_MD = '1') then
-                    reg_MD <= MDR_MUX_out;
+                elsif(rising_edge(CLOCK)) then
+					ALU_Y <= reg_MD;  -- retrieves ALU Y from reg_MD (memory data)
+					if(load_MD = '1') then
+						reg_MD <= MDR_MUX_out;
+					end if;
                 end if;
             end process;
 
@@ -297,19 +298,22 @@ architecture Behavioral of datapath is
             --  ROL - left rotate of ALU_X by 1 bit
             --  NOP - no operation, ALU_op receives ALU_Y
             begin
-                -- negative flag
-                flag_N <= ALU_op(7); -- accumulator msb
-                -- zero flag
                 if(unsigned(ALU_op(7 downto 0)) = 0) then
                     flag_Z <= '1';
                 else
                     flag_Z <= '0';
                 end if;
-
+				
+				ALU_out <= std_logic_vector(ALU_op(7 downto 0));  -- updates ALU output with 7 lsb of ALU_op
+				flag_V <= '1';
+				flag_B <= '1';
+				flag_N <= ALU_op(7); -- accumulator msb
+				flag_C <= ALU_op(8);  -- carry flag
                 case sel_ALU is
                     when ALUADD =>  -- ADD
-                        ALU_op <= std_logic_vector(unsigned('0' & ALU_X) + unsigned('0' & ALU_Y));
-                        -- checks for overflow
+						ALU_op <= std_logic_vector(unsigned('0' & ALU_X) + unsigned('0' & ALU_Y));
+                        
+						-- checks for overflow
                         if (ALU_X(7) = '0' and ALU_Y(7) = '0' and ALU_op(7) = '1') then
                             flag_V <= '1';
                         else
@@ -323,31 +327,34 @@ architecture Behavioral of datapath is
 						
 						-- resets other flag signals
 						flag_B <= '0';
-						flag_V <= '1';
+						flag_V <= '0';
                     when ALUAND =>  -- AND
                         ALU_op <= std_logic_vector(('0' & ALU_X) and ('0' & ALU_Y));
 						
 						-- resets other flag signals
 						flag_B <= '0';
-						flag_V <= '1';
+						flag_V <= '0';
                     when ALUNOT =>  -- NOT
                         ALU_op <= std_logic_vector(not('0' & ALU_X));
 						
 						-- resets other flag signals
 						flag_B <= '0';
-						flag_V <= '1';
+						flag_V <= '0';
                     when ALUSUB =>  -- SUB
                         ALU_op <= std_logic_vector(unsigned('0' & ALU_X) - unsigned('0' & ALU_Y));
-                        -- borrow flag
-                        flag_B <= ALU_op(7) and ALU_op(8);
-                        -- checks for overflow
+                        
+						-- checks for overflow
                         if (ALU_X(7) = '1' and ALU_Y(7) = '1' and ALU_op(7) = '0') then
                             flag_V <= '1';
                         else
                             flag_V <= '0';
                         end if;
+						
+						-- borrow flag
+                        flag_B <= ALU_op(7) and ALU_op(8);
                     when ALUSHR => -- SHR
                         ALU_op(8) <= ALU_X(0);  -- ALU_op, and by consequence carry recieves reg_AC lsb
+                        
                         ALU_op(7) <= '0'; -- ULA_out msb recieves 0
                         ALU_op(6) <= ALU_X(7);
                         ALU_op(5) <= ALU_X(6);
@@ -359,9 +366,10 @@ architecture Behavioral of datapath is
 						
 						-- resets other flag signals
 						flag_B <= '0';
-						flag_V <= '1';
+						flag_V <= '0';
                     when ALUSHL => -- SHL
                         ALU_op(8) <= ALU_X(7);  -- ALU_op, and by consequence carry recieves reg_AC msb
+
                         ALU_op(7) <= ALU_X(6); 
                         ALU_op(6) <= ALU_X(5); 
                         ALU_op(5) <= ALU_X(4); 
@@ -373,9 +381,10 @@ architecture Behavioral of datapath is
 						
 						-- resets other flag signals
 						flag_B <= '0';
-						flag_V <= '1';
+						flag_V <= '0';
                     when ALUROR => -- ROR
                         ALU_op(8) <= ALU_X(0);
+
                         ALU_op(7) <= flag_C;
                         ALU_op(6) <= ALU_X(7);
                         ALU_op(5) <= ALU_X(6);
@@ -387,7 +396,7 @@ architecture Behavioral of datapath is
 						
 						-- resets other flag signals
 						flag_B <= '0';
-						flag_V <= '1';
+						flag_V <= '0';
                     when ALUROL => -- ROL
 						ALU_op(8) <= ALU_X(7);
                         ALU_op(7) <= ALU_X(6);
@@ -401,22 +410,23 @@ architecture Behavioral of datapath is
 						
 						-- resets other flag signals
 						flag_B <= '0';
-						flag_V <= '1';
+						flag_V <= '0';
                     when ALUY => -- ULAY
                         ALU_op <= std_logic_vector('0' & ALU_Y);
 						
 						-- resets other flag signals
 						flag_B <= '0';
-						flag_V <= '1';
+						flag_V <= '0';
                     when others => -- NOP (ULAX - reg_AC)
                         ALU_op <= '0' & ALU_X;  
                 end case;
             end process;   
         
-        IR_DECOD: process(reg_I)  -- IR_DECOD, used for setting instruction_flags
+        IR_DECOD: process(reg_I, IR_DECOD_out)  -- IR_DECOD, used for setting instruction_flags
 			-- decodes reg_I signal setting a 24 bits vector, with flags for each of
             -- the processor instructions
             begin
+				instruction_flags <= IR_DECOD_out;
 				IR_DECOD_out <= "000000000000000000000000";
 				case reg_I is
 					when iNOP => IR_DECOD_out <= "000000000000000000000001"; -- 00 NOP
@@ -443,7 +453,7 @@ architecture Behavioral of datapath is
 					when iROR => IR_DECOD_out <= "001000000000000000000000"; -- 226 ROR
 					when iROL => IR_DECOD_out <= "010000000000000000000000"; -- 227 ROL
 					when iHLT => IR_DECOD_out <= "100000000000000000000000"; -- 240 HLT
-					when others => IR_DECOD_out <= "000000000000000000000001";  -- 00 NOP
+					when others => IR_DECOD_out <= "100000000000000000000000";  -- 00 HLT
                 end case;
 			end process;
     end Behavioral;

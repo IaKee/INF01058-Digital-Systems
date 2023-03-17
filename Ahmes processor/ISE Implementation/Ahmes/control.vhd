@@ -40,7 +40,7 @@ entity control is
 	end control;
 
 architecture Behavioral of control is
-    type state_type is (S0, S1, S2, S3, S4, S5, S6, S7, S8);
+    type state_type is (S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11);
 	signal next_state, current_state: state_type;
 
 	-- intruction signals to be used with instruction_flags slices
@@ -166,31 +166,41 @@ architecture Behavioral of control is
 				load_B <= '0';
 				sel_MUX_MAR <= "0";
 				sel_MUX_MDR <= "0";
-				sel_ALU <= ALUNOP;  -- default ALU operation
 				mem_write <= "0";
 				mem_read <= "0";
+				sel_ALU <= ALUNOP;  -- default ALU operation
+				
 				case current_state is
-					when S0 =>
-						-- used by all instructions
-						-- sets MA to recieve data from reg_PC
-						-- updates MA value
-						sel_MUX_MAR <= "0";  
-						load_MA <= '1';
+					when S0 =>  -- POINTS
+						-- updates memory cursor
+						sel_MUX_MAR <= "0"; -- reg_MA <= reg_PC
+						load_MA <= '1';  -- updates MAR
+					
+						-- goto S1
 						next_state <= S1;
-					when S1 =>
-						-- reads byte from memory updating MD
-						sel_MUX_MDR <= "0";
-						mem_read <= "1";
-						load_MD <= '1';
+					when S1 =>  -- SKIP
 
-						-- increments reg_PC
-						inc_PC <= '1';
+						-- goto S2
 						next_state <= S2;
-					when S2 =>
-						-- updates instruction value (reg_I)
-						load_I <= '1';
+					when S2 =>  -- READS
+						-- reads byte from memory updating MD
+						mem_read <= "1";
+						sel_MUX_MDR <= "0"; -- reg_MD <= mem_out
+						load_MD <= '1';	
+					
+						-- increments reg_PC
+						inc_PC <= '1';  -- adjusts memory cursor and program counter
+						
+						-- goto S3
 						next_state <= S3;
-					when S3 =>
+					when S3 =>  -- FETCH
+						-- fetches new instruction
+						
+						load_I <= '1';  -- reg_I <= reg_MD
+
+						-- goto s3
+						next_state <= S4;
+					when S4 =>  -- INS/POINT
 						if(oNOP = '1') then
 							-- goto S0
 							next_state <= S0;
@@ -328,20 +338,24 @@ architecture Behavioral of control is
 							-- goto S8 (loop state)
 							next_state <= S8;
 						else
-							-- for any sucessful jumping instruction
+							-- for any sucessful jumping instruction and others
 							-- sets memory cursor position to current reg_PC value
-							sel_MUX_MAR <= "0"; -- memory address register recieves data from PC
+							sel_MUX_MAR <= "0"; -- reg_MA <= reg_PC
 							load_MA <= '1';  -- updates reg_MA with reg_PC
-
-							-- goes to S4
-							next_state <= S4;
+							
+							sel_MUX_MDR <= "1";
+							next_state <= S5;
 						end if;
-					when S4 =>
+					when S5 =>  -- SKIP
+						
+						-- goto S6
+						next_state <= S6;
+					when S6 =>  -- SKIP
 						-- reads a new byte from memory
 						mem_read <= "1";
-						sel_MUX_MDR <= "0";  -- recieves output from memory
-						load_MD <= '1'; -- updates memory data register
-						
+						sel_MUX_MDR <= "0";  -- reg_MD <= mem_out
+						load_MD <= '1'; -- updates memory data register	
+
 						-- increments reg_PC for any of the following instructions
 						if(oSTA = '1' or oLDA = '1' or oADD = '1' or oOR = '1' or oAND = '1' or oSUB = '1') then
 							inc_PC <= '1';
@@ -349,16 +363,15 @@ architecture Behavioral of control is
 							inc_PC <= '0';
 						end if;
 
-						-- goes to S5
-						next_state <= S5;
-					when S5 =>
+						-- goes to S7
+						next_state <= S7;
+					when S7 =>  -- POINT
 						if(oSTA = '1' or oLDA = '1' or oADD = '1' or oOR = '1' or oAND = '1' or oSUB = '1') then
-							-- reg_MA recieves data from reg_MD
-							sel_MUX_MAR <= "1";
-							load_MA <= '1';
+							sel_MUX_MAR <= "1";  -- reg_MA <= reg_MD
+							load_MA <= '1';  -- updates reg_MA value
 							
-							-- goto S6
-							next_state <= S6;
+							-- goto S8
+							next_state <= S8;
 						else  -- for any other instruction (jumps)
 							-- updates program counter
 							load_PC <= '1';
@@ -366,29 +379,28 @@ architecture Behavioral of control is
 							-- goto S0
 							next_state <= S0;
 						end if;
-					when S6 =>
+					when S8 =>  -- SKIP
+						next_state <= S9;
+					when S9 =>  -- READ
 						if(oSTA = '1') then  -- STA
-							load_MD <= '1';
-						else -- for any other instruction
-							-- memory read enable pin
+							sel_MUX_MDR <= "1";  -- reg_MD <= reg_AC
+							load_MD <= '1';  -- updates reg_MD value
+						else 
+							-- for any other instruction
 							mem_read <= "1";
-
-							-- updates reg_MD value
-							load_MD <= '1';
+							sel_MUX_MDR <= "0";  -- reg_MD <= mem_out
+							load_MD <= '1';  -- updates MD value
 						end if;
 
-						-- goto s7
-						next_state <= S7;
-					when S7 =>
+						-- goto s10
+						next_state <= S10;
+					when S10 =>  -- INS
 						if(oSTA = '1') then
 							mem_write <= "1";
 
 							-- goto S0
 							next_state <= S0;
-						elsif(oLDA = '1') then
-							-- updates ALU instruction
-							sel_ALU <= ALUY;
-							
+						elsif(oLDA = '1') then		
 							-- updates ULA_out and by consequence the accumulator with reg_MD
 							load_AC <= '1';
 
@@ -398,6 +410,9 @@ architecture Behavioral of control is
 							load_V <= '1'; 
 							load_C <= '1'; 
 							load_B <= '1';
+							
+							-- updates ALU instruction
+							sel_ALU <= ALUY;
 
 							-- goto S0
 							next_state <= S0;
@@ -467,13 +482,13 @@ architecture Behavioral of control is
 							next_state <= S0;
 						else
 							-- invalid instruction
-							next_state <= S8;	
+							next_state <= S11;
 						end if;
-					when S8 =>
+					when S11 =>  -- HALT
 						-- loop state (HALT)
-						next_state <= S8;
-					when others =>
-						next_state <= S0;
+						next_state <= S11;
+					when others =>  -- HALT
+						next_state <= S10;
 				end case;
 			end process;
     end Behavioral;

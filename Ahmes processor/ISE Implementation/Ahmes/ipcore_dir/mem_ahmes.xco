@@ -1,7 +1,7 @@
 ##############################################################
 #
 # Xilinx Core Generator version 14.7
-# Date: Fri Mar 10 02:35:41 2023
+# Date: Fri Mar 17 06:40:24 2023
 #
 ##############################################################
 #
@@ -46,7 +46,7 @@ CSET axi_id_width=4
 CSET axi_slave_type=Memory_Slave
 CSET axi_type=AXI4_Full
 CSET byte_size=8
-CSET coe_file="D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\Memory Initialization\progA.coe"
+CSET coe_file="D:\Documentos\Escola\UFRGS\Nono semestre\INF01058-Digital-Systems\Ahmes processor\Memory Initialization\mult2.coe"
 CSET collision_warnings=ALL
 CSET component_name=mem_ahmes
 CSET disable_collision_warnings=false
@@ -62,7 +62,7 @@ CSET interface_type=Native
 CSET load_init_file=true
 CSET mem_file=no_Mem_file_loaded
 CSET memory_type=Single_Port_RAM
-CSET operating_mode_a=WRITE_FIRST
+CSET operating_mode_a=READ_FIRST
 CSET operating_mode_b=WRITE_FIRST
 CSET output_reset_value_a=0
 CSET output_reset_value_b=0
@@ -105,4 +105,4 @@ CSET write_width_b=8
 MISC pkg_timestamp=2012-11-19T16:22:25Z
 # END Extra information
 GENERATE
-# CRC: e78e1684
+# CRC:  284d113

@@ -15,7 +15,11 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="41" />
+   <WVObjectSize size="70" />
+   <wave_markers>
+      <marker time="155000000" label="" />
+      <marker time="145000000" label="" />
+   </wave_markers>
    <wvobject fp_name="/ahmes_tb/clock" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">clock</obj_property>
       <obj_property name="ObjectShortName">clock</obj_property>
@@ -25,19 +29,47 @@
       <obj_property name="ObjectShortName">reset</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/CTRL/next_state" type="other" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">next_state</obj_property>
       <obj_property name="ObjectShortName">next_state</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/CTRL/current_state" type="other" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">current_state</obj_property>
       <obj_property name="ObjectShortName">current_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/DP/alu_x" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">alu_x[7:0]</obj_property>
+      <obj_property name="ObjectShortName">alu_x[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#ff0000</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/DP/alu_y" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">alu_y[7:0]</obj_property>
+      <obj_property name="ObjectShortName">alu_y[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#ff0000</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/DP/alu_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">alu_out[7:0]</obj_property>
+      <obj_property name="ObjectShortName">alu_out[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/sel_alu" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sel_alu[3:0]</obj_property>
+      <obj_property name="ObjectShortName">sel_alu[3:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/DP/reg_ac" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">reg_ac[7:0]</obj_property>
       <obj_property name="ObjectShortName">reg_ac[7:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#ff0000</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_i" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">load_i</obj_property>
+      <obj_property name="ObjectShortName">load_i</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/DP/reg_i" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">reg_i[7:0]</obj_property>
@@ -49,9 +81,27 @@
       <obj_property name="ObjectShortName">mem_out[7:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/DP/reg_md" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">reg_md[7:0]</obj_property>
+      <obj_property name="ObjectShortName">reg_md[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/DP/mdr_mux_out" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">mdr_mux_out[7:0]</obj_property>
       <obj_property name="ObjectShortName">mdr_mux_out[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/sel_mux_mdr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sel_mux_mdr[0:0]</obj_property>
+      <obj_property name="ObjectShortName">sel_mux_mdr[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/DP/load_ma" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">load_ma</obj_property>
+      <obj_property name="ObjectShortName">load_ma</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/DP/reg_ma" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">reg_ma[7:0]</obj_property>
+      <obj_property name="ObjectShortName">reg_ma[7:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/DP/mar_mux_out" type="array" db_ref_id="1">
@@ -59,34 +109,89 @@
       <obj_property name="ObjectShortName">mar_mux_out[7:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/ahmes_tb/clock_period" type="other" db_ref_id="1">
-      <obj_property name="ElementShortName">clock_period</obj_property>
-      <obj_property name="ObjectShortName">clock_period</obj_property>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/sel_mux_mar" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sel_mux_mar[0:0]</obj_property>
+      <obj_property name="ObjectShortName">sel_mux_mar[0:0]</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#00ff00</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/mem_read" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">mem_read[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mem_read[0:0]</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#0000ff</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/mem_write" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">mem_write[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mem_write[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/DP/reg_pc" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">reg_pc[7:0]</obj_property>
+      <obj_property name="ObjectShortName">reg_pc[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/inc_pc" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">inc_pc</obj_property>
+      <obj_property name="ObjectShortName">inc_pc</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_pc" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">load_pc</obj_property>
+      <obj_property name="ObjectShortName">load_pc</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/DP/reg_n" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">reg_n</obj_property>
+      <obj_property name="ObjectShortName">reg_n</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/CTRL/reg_n" type="logic" db_ref_id="1">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">reg_n</obj_property>
       <obj_property name="ObjectShortName">reg_n</obj_property>
    </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_n" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">load_n</obj_property>
+      <obj_property name="ObjectShortName">load_n</obj_property>
+   </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/CTRL/reg_z" type="logic" db_ref_id="1">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">reg_z</obj_property>
       <obj_property name="ObjectShortName">reg_z</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_z" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">load_z</obj_property>
+      <obj_property name="ObjectShortName">load_z</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/CTRL/reg_v" type="logic" db_ref_id="1">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">reg_v</obj_property>
       <obj_property name="ObjectShortName">reg_v</obj_property>
    </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_v" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">load_v</obj_property>
+      <obj_property name="ObjectShortName">load_v</obj_property>
+   </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/CTRL/reg_c" type="logic" db_ref_id="1">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">reg_c</obj_property>
       <obj_property name="ObjectShortName">reg_c</obj_property>
    </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_c" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">load_c</obj_property>
+      <obj_property name="ObjectShortName">load_c</obj_property>
+   </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/CTRL/reg_b" type="logic" db_ref_id="1">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">reg_b</obj_property>
       <obj_property name="ObjectShortName">reg_b</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_b" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">load_b</obj_property>
+      <obj_property name="ObjectShortName">load_b</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/CTRL/inc_pc" type="logic" db_ref_id="1">
       <obj_property name="DisplayName">label</obj_property>
@@ -118,98 +223,124 @@
       <obj_property name="ElementShortName">load_i</obj_property>
       <obj_property name="ObjectShortName">load_i</obj_property>
    </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_n" type="logic" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">load_n</obj_property>
-      <obj_property name="ObjectShortName">load_n</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_z" type="logic" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">load_z</obj_property>
-      <obj_property name="ObjectShortName">load_z</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_v" type="logic" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">load_v</obj_property>
-      <obj_property name="ObjectShortName">load_v</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_c" type="logic" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">load_c</obj_property>
-      <obj_property name="ObjectShortName">load_c</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/load_b" type="logic" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">load_b</obj_property>
-      <obj_property name="ObjectShortName">load_b</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/sel_mux_mar" type="array" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">sel_mux_mar[0:0]</obj_property>
-      <obj_property name="ObjectShortName">sel_mux_mar[0:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/sel_mux_mdr" type="array" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">sel_mux_mdr[0:0]</obj_property>
-      <obj_property name="ObjectShortName">sel_mux_mdr[0:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/sel_alu" type="array" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">sel_alu[3:0]</obj_property>
-      <obj_property name="ObjectShortName">sel_alu[3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/mem_read" type="array" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">mem_read[0:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_read[0:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/CTRL/mem_write" type="array" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">mem_write[0:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_write[0:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/DP/reg_n" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">reg_n</obj_property>
-      <obj_property name="ObjectShortName">reg_n</obj_property>
-   </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/DP/reg_z" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">FullPathName</obj_property>
       <obj_property name="ElementShortName">reg_z</obj_property>
       <obj_property name="ObjectShortName">reg_z</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/DP/reg_v" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">FullPathName</obj_property>
       <obj_property name="ElementShortName">reg_v</obj_property>
       <obj_property name="ObjectShortName">reg_v</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/DP/reg_c" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">FullPathName</obj_property>
       <obj_property name="ElementShortName">reg_c</obj_property>
       <obj_property name="ObjectShortName">reg_c</obj_property>
    </wvobject>
    <wvobject fp_name="/ahmes_tb/uut/DP/reg_b" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">FullPathName</obj_property>
       <obj_property name="ElementShortName">reg_b</obj_property>
       <obj_property name="ObjectShortName">reg_b</obj_property>
    </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/DP/reg_pc" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">reg_pc[7:0]</obj_property>
-      <obj_property name="ObjectShortName">reg_pc[7:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   <wvobject fp_name="/ahmes_tb/uut/s_instruction_flags" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">s_instruction_flags[23:0]</obj_property>
+      <obj_property name="ObjectShortName">s_instruction_flags[23:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/DP/reg_ma" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">reg_ma[7:0]</obj_property>
-      <obj_property name="ObjectShortName">reg_ma[7:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   <wvobject fp_name="/ahmes_tb/uut/DP/ir_decod_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">ir_decod_out[23:0]</obj_property>
+      <obj_property name="ObjectShortName">ir_decod_out[23:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/DP/reg_md" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">reg_md[7:0]</obj_property>
-      <obj_property name="ObjectShortName">reg_md[7:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/onop" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">onop</obj_property>
+      <obj_property name="ObjectShortName">onop</obj_property>
    </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/DP/alu_out" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">alu_out[7:0]</obj_property>
-      <obj_property name="ObjectShortName">alu_out[7:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/osta" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">osta</obj_property>
+      <obj_property name="ObjectShortName">osta</obj_property>
    </wvobject>
-   <wvobject fp_name="/ahmes_tb/uut/DP/instruction_flags" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">instruction_flags[23:0]</obj_property>
-      <obj_property name="ObjectShortName">instruction_flags[23:0]</obj_property>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/olda" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">olda</obj_property>
+      <obj_property name="ObjectShortName">olda</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/oadd" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">oadd</obj_property>
+      <obj_property name="ObjectShortName">oadd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/oor" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">oor</obj_property>
+      <obj_property name="ObjectShortName">oor</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/oand" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">oand</obj_property>
+      <obj_property name="ObjectShortName">oand</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/onot" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">onot</obj_property>
+      <obj_property name="ObjectShortName">onot</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/osub" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">osub</obj_property>
+      <obj_property name="ObjectShortName">osub</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojn" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojn</obj_property>
+      <obj_property name="ObjectShortName">ojn</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojp" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojp</obj_property>
+      <obj_property name="ObjectShortName">ojp</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojv" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojv</obj_property>
+      <obj_property name="ObjectShortName">ojv</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojnv" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojnv</obj_property>
+      <obj_property name="ObjectShortName">ojnv</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojz" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojz</obj_property>
+      <obj_property name="ObjectShortName">ojz</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojnz" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojnz</obj_property>
+      <obj_property name="ObjectShortName">ojnz</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojc" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojc</obj_property>
+      <obj_property name="ObjectShortName">ojc</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojnc" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojnc</obj_property>
+      <obj_property name="ObjectShortName">ojnc</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojb" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojb</obj_property>
+      <obj_property name="ObjectShortName">ojb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ojnb" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ojnb</obj_property>
+      <obj_property name="ObjectShortName">ojnb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/oshr" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">oshr</obj_property>
+      <obj_property name="ObjectShortName">oshr</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/oshl" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">oshl</obj_property>
+      <obj_property name="ObjectShortName">oshl</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/oror" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">oror</obj_property>
+      <obj_property name="ObjectShortName">oror</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/orol" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">orol</obj_property>
+      <obj_property name="ObjectShortName">orol</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ahmes_tb/uut/CTRL/ohlt" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ohlt</obj_property>
+      <obj_property name="ObjectShortName">ohlt</obj_property>
    </wvobject>
 </wave_config>
